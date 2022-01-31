@@ -100,7 +100,7 @@ class _PaymentFailedPageState extends State<PaymentFailedPage> {
         title: 'go_shopping_cart_button_title'.tr(),
         titleSize: 14.sp,
         titleColor: Colors.white,
-        buttonColor: primaryColor,
+        buttonColor: primarySwatchColor,
         borderColor: Colors.transparent,
         onPressed: () {
           Navigator.popUntil(

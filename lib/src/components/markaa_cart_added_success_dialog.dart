@@ -19,12 +19,10 @@ class MarkaaCartAddedSuccessDialog extends StatefulWidget {
   MarkaaCartAddedSuccessDialog({required this.product});
 
   @override
-  _MarkaaCartAddedSuccessDialogState createState() =>
-      _MarkaaCartAddedSuccessDialogState();
+  _MarkaaCartAddedSuccessDialogState createState() => _MarkaaCartAddedSuccessDialogState();
 }
 
-class _MarkaaCartAddedSuccessDialogState
-    extends State<MarkaaCartAddedSuccessDialog> {
+class _MarkaaCartAddedSuccessDialogState extends State<MarkaaCartAddedSuccessDialog> {
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -116,10 +114,9 @@ class _MarkaaCartAddedSuccessDialogState
                     title: 'visit_cart_button_title'.tr(),
                     titleSize: 12.sp,
                     titleColor: Colors.white,
-                    buttonColor: primaryColor,
+                    buttonColor: primarySwatchColor,
                     borderColor: Colors.transparent,
-                    onPressed: () =>
-                        Navigator.popAndPushNamed(context, Routes.myCart),
+                    onPressed: () => Navigator.popAndPushNamed(context, Routes.myCart),
                     isBold: true,
                     radius: 4.sp,
                   ),

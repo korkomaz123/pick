@@ -13,28 +13,38 @@ import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/utils/services/action_handler.dart';
 
-import '../../../../preload.dart';
 import 'home_loading_widget.dart';
+import 'home_perfumes.dart';
 
-class HomeFragrancesBanners extends StatelessWidget {
+class HomeFragrancesBanners extends StatefulWidget {
   final HomeChangeNotifier homeChangeNotifier;
 
   HomeFragrancesBanners({required this.homeChangeNotifier});
 
   @override
+  State<HomeFragrancesBanners> createState() => _HomeFragrancesBannersState();
+}
+
+class _HomeFragrancesBannersState extends State<HomeFragrancesBanners> {
+  @override
   Widget build(BuildContext context) {
-    if (homeChangeNotifier.fragrancesBanners.isNotEmpty || homeChangeNotifier.fragrancesBannersTitle.isNotEmpty) {
+    if (widget.homeChangeNotifier.fragrancesBanners.isNotEmpty ||
+        widget.homeChangeNotifier.fragrancesBannersTitle.isNotEmpty) {
       return Container(
         width: designWidth.w,
+        color: Colors.white,
+        padding: EdgeInsets.only(bottom: 10.h),
+        margin: EdgeInsets.only(bottom: 10.h),
         child: Column(
           children: [
-            if (homeChangeNotifier.fragrancesBanners.isNotEmpty) ...[
-              _buildBanners(homeChangeNotifier.fragrancesBanners, context)
+            if (widget.homeChangeNotifier.fragrancesBannersTitle.isNotEmpty) ...[
+              _buildTitle(widget.homeChangeNotifier.fragrancesBannersTitle, context)
             ],
-            if (homeChangeNotifier.fragrancesBannersTitle.isNotEmpty) ...[
-              SizedBox(height: 10.h),
-              _buildTitle(homeChangeNotifier.fragrancesBannersTitle, context)
+            if (widget.homeChangeNotifier.fragrancesBanners.isNotEmpty) ...[
+              _buildBanners(widget.homeChangeNotifier.fragrancesBanners, context)
             ],
+            HomePerfumes(homeChangeNotifier: widget.homeChangeNotifier),
+            _buildViewAllButton(),
           ],
         ),
       );
@@ -47,40 +57,10 @@ class HomeFragrancesBanners extends StatelessWidget {
       width: double.infinity,
       color: Colors.white,
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Text(
-              title,
-              maxLines: 1,
-              style: mediumTextStyle.copyWith(fontSize: 26.sp),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 2.w),
-            height: 30.h,
-            child: MarkaaTextButton(
-              title: 'view_all'.tr(),
-              titleSize: Preload.language == 'en' ? 12.sp : 10.sp,
-              titleColor: primaryColor,
-              buttonColor: Colors.white,
-              borderColor: primaryColor,
-              borderWidth: Preload.language == 'en' ? 1 : 0.5,
-              radius: 0,
-              onPressed: () async {
-                ProductListArguments arguments = ProductListArguments(
-                  category: homeCategories[2],
-                  subCategory: homeCategories[2].subCategories,
-                  brand: null,
-                  selectedSubCategoryIndex: 0,
-                  isFromBrand: false,
-                );
-                Navigator.pushNamed(context, Routes.productList, arguments: arguments);
-              },
-            ),
-          )
-        ],
+      child: Text(
+        title,
+        maxLines: 1,
+        style: mediumTextStyle.copyWith(fontSize: 26.sp),
       ),
     );
   }
@@ -103,6 +83,31 @@ class HomeFragrancesBanners extends StatelessWidget {
             ),
           );
         }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildViewAllButton() {
+    return Container(
+      width: 375.w,
+      height: 45.h,
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      child: MarkaaTextButton(
+        title: 'view_all'.tr(),
+        titleSize: 20.sp,
+        titleColor: Colors.white,
+        buttonColor: primarySwatchColor,
+        borderColor: Colors.transparent,
+        onPressed: () async {
+          ProductListArguments arguments = ProductListArguments(
+            category: homeCategories[2],
+            subCategory: homeCategories[2].subCategories,
+            brand: null,
+            selectedSubCategoryIndex: 0,
+            isFromBrand: false,
+          );
+          Navigator.pushNamed(context, Routes.productList, arguments: arguments);
+        },
       ),
     );
   }

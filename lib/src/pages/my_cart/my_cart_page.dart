@@ -367,7 +367,7 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
         title: 'checkout_button_title'.tr(),
         titleSize: 20.sp,
         titleColor: Colors.white,
-        buttonColor: primaryColor,
+        buttonColor: primarySwatchColor,
         borderColor: primaryColor,
         onPressed: () => user?.token != null ? _onCheckout() : _onSignIn(true),
         radius: 6.sp,

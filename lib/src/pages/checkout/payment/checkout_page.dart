@@ -184,7 +184,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         title: 'checkout_place_payment_button_title'.tr(),
         titleColor: Colors.white,
         titleSize: 20.sp,
-        buttonColor: primaryColor,
+        buttonColor: primarySwatchColor,
         borderColor: primaryColor,
         onPressed: () => _onPlaceOrder(),
         radius: 6.sp,

@@ -4,18 +4,14 @@ import 'dart:io';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_simple_app_bar.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/slider_image_entity.dart';
-import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/utils/services/dynamic_link_service.dart';
 import 'package:markaa/src/utils/services/communicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'widgets/home_advertise.dart';
 import 'widgets/home_best_deals.dart';
@@ -23,7 +19,6 @@ import 'widgets/home_best_deals_banner.dart';
 import 'widgets/home_best_watches.dart';
 import 'widgets/home_celebrity.dart';
 import 'widgets/home_discover_stores.dart';
-import 'widgets/home_explore_categories.dart';
 import 'widgets/home_featured_categories.dart';
 import 'widgets/home_fragrances_banners.dart';
 import 'widgets/home_grooming.dart';
@@ -32,10 +27,10 @@ import 'widgets/home_mega_banner.dart';
 import 'widgets/home_new_arrivals.dart';
 import 'widgets/home_new_arrivals_banner.dart';
 import 'widgets/home_oriental_fragrances.dart';
-import 'widgets/home_perfumes.dart';
 import 'widgets/home_popup_dialog.dart';
 import 'widgets/home_recent.dart';
 import 'widgets/home_sale_brands.dart';
+import 'widgets/home_shop_by_category.dart';
 import 'widgets/home_smart_tech.dart';
 
 class HomePage extends StatefulWidget {
@@ -118,89 +113,39 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Ticker
       },
       child: Scaffold(
         key: scaffoldKey,
-        appBar: MarkaaSimpleAppBar(scaffoldKey: scaffoldKey),
-        drawer: MarkaaSideMenu(),
         backgroundColor: scaffoldBackgroundColor,
-        body: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              SliverAppBar(
-                toolbarHeight: 40.h,
-                expandedHeight: 40.h,
-                floating: false,
-                pinned: false,
-                leading: SizedBox.shrink(),
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Container(
-                    width: double.infinity,
-                    margin: EdgeInsets.only(bottom: 10.h, left: 10.w, right: 10.w),
-                    child: TextFormField(
-                      controller: TextEditingController(),
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.sp),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.sp),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.sp),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: 'search_items'.tr(),
-                        hintStyle: TextStyle(color: primarySwatchColor),
-                        suffixIcon: Icon(
-                          Icons.search,
-                          color: greyDarkColor,
-                          size: 25.sp,
-                        ),
-                      ),
-                      readOnly: true,
-                      onTap: () => Navigator.pushNamed(context, Routes.search),
-                    ),
-                  ),
+        body: Consumer<HomeChangeNotifier>(
+          builder: (_, __, ___) {
+            return RefreshIndicator(
+              onRefresh: () => _loadHomePage(),
+              color: primaryColor,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    MarkaaSimpleAppBar(),
+                    HomeHeaderCarousel(homeChangeNotifier: _homeProvider),
+                    HomeFeaturedCategories(homeChangeNotifier: _homeProvider),
+                    HomeMegaBanner(homeChangeNotifier: _homeProvider),
+                    HomeShopByCategory(homeChangeNotifier: _homeProvider),
+                    HomeSaleBrands(homeChangeNotifier: _homeProvider),
+                    HomeBestDeals(homeChangeNotifier: _homeProvider),
+                    HomeFragrancesBanners(homeChangeNotifier: _homeProvider),
+                    HomeOrientalFragrances(homeChangeNotifier: _homeProvider),
+                    HomeCelebrity(homeChangeNotifier: _homeProvider),
+                    HomeGrooming(homeChangeNotifier: _homeProvider),
+                    HomeBestDealsBanner(homeChangeNotifier: _homeProvider),
+                    HomeNewArrivals(homeChangeNotifier: _homeProvider),
+                    HomeNewArrivalsBanner(homeChangeNotifier: _homeProvider),
+                    HomeBestWatches(homeChangeNotifier: _homeProvider),
+                    HomeAdvertise(homeChangeNotifier: _homeProvider),
+                    HomeSmartTech(homeChangeNotifier: _homeProvider),
+                    HomeDiscoverStores(homeChangeNotifier: _homeProvider),
+                    HomeRecent(homeChangeNotifier: _homeProvider),
+                  ],
                 ),
               ),
-            ];
+            );
           },
-          body: Consumer<HomeChangeNotifier>(
-            builder: (_, __, ___) {
-              return RefreshIndicator(
-                onRefresh: () => _loadHomePage(),
-                color: primaryColor,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      HomeHeaderCarousel(homeChangeNotifier: _homeProvider),
-                      HomeFeaturedCategories(homeChangeNotifier: _homeProvider),
-                      HomeMegaBanner(homeChangeNotifier: _homeProvider),
-                      HomeBestDeals(homeChangeNotifier: _homeProvider),
-                      HomeCelebrity(homeChangeNotifier: _homeProvider),
-                      HomeGrooming(homeChangeNotifier: _homeProvider),
-                      HomeBestDealsBanner(homeChangeNotifier: _homeProvider),
-                      HomeSaleBrands(homeChangeNotifier: _homeProvider),
-                      HomeNewArrivals(homeChangeNotifier: _homeProvider),
-                      HomeOrientalFragrances(homeChangeNotifier: _homeProvider),
-                      HomeNewArrivalsBanner(homeChangeNotifier: _homeProvider),
-                      HomeFragrancesBanners(homeChangeNotifier: _homeProvider),
-                      HomePerfumes(homeChangeNotifier: _homeProvider),
-                      HomeBestWatches(homeChangeNotifier: _homeProvider),
-                      HomeAdvertise(homeChangeNotifier: _homeProvider),
-                      HomeExploreCategories(homeChangeNotifier: _homeProvider),
-                      HomeDiscoverStores(homeChangeNotifier: _homeProvider),
-                      HomeSmartTech(homeChangeNotifier: _homeProvider),
-                      HomeRecent(homeChangeNotifier: _homeProvider),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
         ),
         bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.home),
       ),

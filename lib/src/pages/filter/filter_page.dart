@@ -295,7 +295,7 @@ class _FilterPageState extends State<FilterPage> {
         title: 'apply_button_title'.tr(),
         titleSize: 24.sp,
         titleColor: Colors.white,
-        buttonColor: primaryColor,
+        buttonColor: primarySwatchColor,
         borderColor: Colors.transparent,
         radius: 0,
         onPressed: () => Navigator.pop(context, {

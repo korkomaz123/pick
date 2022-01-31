@@ -1,9 +1,8 @@
-import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_custom_suffix_input.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_custom_input.dart';
 import 'package:markaa/src/components/markaa_custom_input_multi.dart';
+import 'package:markaa/src/components/secondary_app_bar.dart';
 import 'package:markaa/src/config/config.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -119,32 +118,8 @@ class _EditAddressPageState extends State<EditAddressPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      appBar: MarkaaAppBar(
-        scaffoldKey: scaffoldKey,
-        isCenter: false,
-      ),
-      drawer: MarkaaSideMenu(),
-      body: Column(
-        children: [
-          AppBar(
-            elevation: 0,
-            toolbarHeight: 50.h,
-            leading: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: Icon(Icons.arrow_back_ios, size: 22.sp),
-            ),
-            centerTitle: true,
-            title: Text(
-              'shipping_address_title'.tr(),
-              style: mediumTextStyle.copyWith(
-                color: Colors.white,
-                fontSize: 17.sp,
-              ),
-            ),
-          ),
-          _buildEditFormView(),
-        ],
-      ),
+      appBar: SecondaryAppBar(title: 'shipping_address_title'.tr()),
+      body: _buildEditFormView(),
       bottomNavigationBar: MarkaaBottomBar(
         activeItem: BottomEnum.account,
       ),
@@ -152,110 +127,108 @@ class _EditAddressPageState extends State<EditAddressPage> {
   }
 
   Widget _buildEditFormView() {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: Form(
-          key: formKey,
-          child: Column(
-            children: [
-              Column(
-                children: [
-                  SizedBox(height: 10.h),
-                  MarkaaCustomInput(
-                    controller: fullNameController,
-                    width: designWidth.w,
-                    padding: 10.w,
-                    fontSize: 14.sp,
-                    hint: 'full_name'.tr(),
-                    validator: (String value) {
-                      if (value.isEmpty) {
-                        return 'required_field'.tr();
-                      } else if (!value.isValidName) {
-                        return 'full_name_issue'.tr();
-                      }
-                      return null;
-                    },
-                    inputType: TextInputType.text,
+    return SingleChildScrollView(
+      child: Form(
+        key: formKey,
+        child: Column(
+          children: [
+            Column(
+              children: [
+                SizedBox(height: 10.h),
+                MarkaaCustomInput(
+                  controller: fullNameController,
+                  width: designWidth.w,
+                  padding: 10.w,
+                  fontSize: 14.sp,
+                  hint: 'full_name'.tr(),
+                  validator: (String value) {
+                    if (value.isEmpty) {
+                      return 'required_field'.tr();
+                    } else if (!value.isValidName) {
+                      return 'full_name_issue'.tr();
+                    }
+                    return null;
+                  },
+                  inputType: TextInputType.text,
+                ),
+                SizedBox(height: 10.h),
+                MarkaaCustomInput(
+                  controller: phoneNumberController,
+                  width: 375.w,
+                  padding: 10.h,
+                  fontSize: 14.sp,
+                  hint: 'phone_number_hint'.tr(),
+                  maxLength: 9,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'required_field'.tr();
+                    } else if (!isLength(value, 8, 9)) {
+                      return 'invalid_length_phone_number'.tr();
+                    }
+                    return null;
+                  },
+                  inputType: TextInputType.phone,
+                ),
+                SizedBox(height: 10.h),
+                MarkaaCustomInput(
+                  controller: stateController,
+                  width: 375.w,
+                  padding: 10.h,
+                  fontSize: 14.sp,
+                  hint: 'checkout_state_hint'.tr(),
+                  validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                  inputType: TextInputType.text,
+                  readOnly: true,
+                  onTap: _onSelectState,
+                ),
+                SizedBox(height: 10.h),
+                MarkaaCustomInput(
+                  controller: companyController,
+                  width: 375.w,
+                  padding: 10.h,
+                  fontSize: 14.sp,
+                  hint: 'checkout_company_hint'.tr(),
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'required_field'.tr();
+                    } else if (!isInt(value)) {
+                      return 'invalid_field'.tr();
+                    }
+                    return null;
+                  },
+                  inputType: TextInputType.text,
+                  readOnly: true,
+                  onTap: _onSelectBlock,
+                ),
+                SizedBox(height: 10.h),
+                MarkaaCustomSuffixInput(
+                  controller: streetController,
+                  width: 375.w,
+                  padding: 10.w,
+                  fontSize: 14.sp,
+                  hint: 'checkout_street_name_hint'.tr(),
+                  validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                  inputType: TextInputType.text,
+                  suffixIcon: IconButton(
+                    onPressed: _onSearchAddress,
+                    icon: SvgPicture.asset(searchAddrIcon),
                   ),
-                  SizedBox(height: 10.h),
-                  MarkaaCustomInput(
-                    controller: phoneNumberController,
-                    width: 375.w,
-                    padding: 10.h,
-                    fontSize: 14.sp,
-                    hint: 'phone_number_hint'.tr(),
-                    maxLength: 9,
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'required_field'.tr();
-                      } else if (!isLength(value, 8, 9)) {
-                        return 'invalid_length_phone_number'.tr();
-                      }
-                      return null;
-                    },
-                    inputType: TextInputType.phone,
-                  ),
-                  SizedBox(height: 10.h),
-                  MarkaaCustomInput(
-                    controller: stateController,
-                    width: 375.w,
-                    padding: 10.h,
-                    fontSize: 14.sp,
-                    hint: 'checkout_state_hint'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
-                    inputType: TextInputType.text,
-                    readOnly: true,
-                    onTap: _onSelectState,
-                  ),
-                  SizedBox(height: 10.h),
-                  MarkaaCustomInput(
-                    controller: companyController,
-                    width: 375.w,
-                    padding: 10.h,
-                    fontSize: 14.sp,
-                    hint: 'checkout_company_hint'.tr(),
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'required_field'.tr();
-                      } else if (!isInt(value)) {
-                        return 'invalid_field'.tr();
-                      }
-                      return null;
-                    },
-                    inputType: TextInputType.text,
-                    readOnly: true,
-                    onTap: _onSelectBlock,
-                  ),
-                  SizedBox(height: 10.h),
-                  MarkaaCustomSuffixInput(
-                    controller: streetController,
-                    width: 375.w,
-                    padding: 10.w,
-                    fontSize: 14.sp,
-                    hint: 'checkout_street_name_hint'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
-                    inputType: TextInputType.text,
-                    suffixIcon: IconButton(
-                      onPressed: _onSearchAddress,
-                      icon: SvgPicture.asset(searchAddrIcon),
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  MarkaaCustomInputMulti(
-                    controller: cityController,
-                    width: 375.w,
-                    padding: 10.h,
-                    fontSize: 14.sp,
-                    hint: 'checkout_city_hint'.tr(),
-                    validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
-                    inputType: TextInputType.text,
-                    maxLine: 3,
-                  ),
-                ],
-              ),
-              _buildSaveButton(),
-            ],
-          ),
+                ),
+                SizedBox(height: 10.h),
+                MarkaaCustomInputMulti(
+                  controller: cityController,
+                  width: 375.w,
+                  padding: 10.h,
+                  fontSize: 14.sp,
+                  hint: 'checkout_city_hint'.tr(),
+                  validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
+                  inputType: TextInputType.text,
+                  maxLine: 3,
+                ),
+              ],
+            ),
+            _buildSaveButton(),
+          ],
         ),
       ),
     );

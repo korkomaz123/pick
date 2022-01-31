@@ -1,7 +1,6 @@
-import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_icon_button.dart';
+import 'package:markaa/src/components/secondary_app_bar.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/pages/my_account/order_history/widgets/order_address_bar.dart';
@@ -105,31 +104,11 @@ class _ViewOrderPageState extends State<ViewOrderPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: MarkaaAppBar(
-        scaffoldKey: scaffoldKey,
-        isCenter: false,
-      ),
-      drawer: MarkaaSideMenu(),
+      appBar: SecondaryAppBar(title: 'view_order_button_title'.tr()),
       body: Column(
-        children: [_buildAppBar(), _buildOrder(), _buildCallUs()],
+        children: [_buildOrder(), _buildCallUs()],
       ),
       bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return AppBar(
-      elevation: 0,
-      toolbarHeight: 50.h,
-      leading: IconButton(
-        onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
-      ),
-      centerTitle: true,
-      title: Text(
-        'view_order_button_title'.tr(),
-        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
-      ),
     );
   }
 

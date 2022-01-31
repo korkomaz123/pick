@@ -4,7 +4,6 @@ import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
@@ -70,22 +69,8 @@ class _BrandListPageState extends State<BrandListPage> {
       key: scaffoldKey,
       backgroundColor: backgroundColor,
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, isCenter: false),
-      drawer: MarkaaSideMenu(),
       body: Column(
         children: [
-          Container(
-            width: 375.w,
-            height: 40.h,
-            color: primarySwatchColor,
-            padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 10.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildCategoryButton(),
-                _buildBrandButton(),
-              ],
-            ),
-          ),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.symmetric(vertical: 5.h),
@@ -160,56 +145,6 @@ class _BrandListPageState extends State<BrandListPage> {
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.store),
-    );
-  }
-
-  Widget _buildCategoryButton() {
-    return Container(
-      child: MaterialButton(
-        onPressed: () {
-          Navigator.popUntil(
-            context,
-            (route) => route.settings.name == Routes.home,
-          );
-          Navigator.pushNamed(context, Routes.categoryList);
-        },
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(lang == 'en' ? 30 : 0),
-            bottomLeft: Radius.circular(lang == 'en' ? 30 : 0),
-            topRight: Radius.circular(lang == 'ar' ? 30 : 0),
-            bottomRight: Radius.circular(lang == 'ar' ? 30 : 0),
-          ),
-        ),
-        color: Colors.white,
-        elevation: 0,
-        child: Text(
-          'home_categories'.tr(),
-          style: mediumTextStyle.copyWith(color: greyColor, fontSize: 12.sp),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBrandButton() {
-    return Container(
-      child: MaterialButton(
-        onPressed: () => null,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(lang == 'ar' ? 30 : 0),
-            bottomLeft: Radius.circular(lang == 'ar' ? 30 : 0),
-            topRight: Radius.circular(lang == 'en' ? 30 : 0),
-            bottomRight: Radius.circular(lang == 'en' ? 30 : 0),
-          ),
-        ),
-        color: Colors.white.withOpacity(0.4),
-        elevation: 0,
-        child: Text(
-          'brands_title'.tr(),
-          style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 12.sp),
-        ),
-      ),
     );
   }
 

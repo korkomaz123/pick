@@ -1,12 +1,10 @@
 import 'package:markaa/src/change_notifier/account_change_notifier.dart';
-import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_input_field.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
+import 'package:markaa/src/components/secondary_app_bar.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
-import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -44,50 +42,26 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
-      drawer: MarkaaSideMenu(),
-      body: Column(
-        children: [
-          _buildAppBar(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Form(
-                key: formKey,
-                child: Column(
-                  children: [
-                    SizedBox(height: 30.h),
-                    _buildOldPassword(),
-                    SizedBox(height: 10.h),
-                    _buildNewPassword(),
-                    SizedBox(height: 10.h),
-                    _buildConfirmPassword(),
-                    SizedBox(height: 10.h),
-                    _buildUpdateButton(),
-                    SizedBox(height: 30.h),
-                  ],
-                ),
-              ),
-            ),
+      appBar: SecondaryAppBar(title: 'account_update_profile_title'.tr()),
+      body: SingleChildScrollView(
+        child: Form(
+          key: formKey,
+          child: Column(
+            children: [
+              SizedBox(height: 30.h),
+              _buildOldPassword(),
+              SizedBox(height: 10.h),
+              _buildNewPassword(),
+              SizedBox(height: 10.h),
+              _buildConfirmPassword(),
+              SizedBox(height: 10.h),
+              _buildUpdateButton(),
+              SizedBox(height: 30.h),
+            ],
           ),
-        ],
+        ),
       ),
       bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return AppBar(
-      elevation: 0,
-      toolbarHeight: 50.h,
-      leading: IconButton(
-        onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
-      ),
-      centerTitle: true,
-      title: Text(
-        'account_update_profile_title'.tr(),
-        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
-      ),
     );
   }
 
@@ -172,7 +146,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         title: 'update_button_title'.tr(),
         titleSize: 14.sp,
         titleColor: Colors.white,
-        buttonColor: primaryColor,
+        buttonColor: primarySwatchColor,
         borderColor: Colors.transparent,
         onPressed: () => _onSave(),
         radius: 0,

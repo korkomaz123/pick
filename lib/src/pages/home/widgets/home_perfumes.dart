@@ -26,8 +26,6 @@ class _HomePerfumesState extends State<HomePerfumes> {
         widget.homeChangeNotifier.perfumesProducts.length > 4) {
       return Container(
         width: designWidth.w,
-        color: Colors.white,
-        margin: EdgeInsets.only(bottom: 10.h),
         child: Column(
           children: [
             _buildProductView(),

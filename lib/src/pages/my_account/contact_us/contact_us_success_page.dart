@@ -1,7 +1,6 @@
-import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
+import 'package:markaa/src/components/secondary_app_bar.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -25,27 +24,9 @@ class _ContactUsSuccessPageState extends State<ContactUsSuccessPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
-      drawer: MarkaaSideMenu(),
-      body: Column(
-        children: [_buildAppBar(), _buildContactUsSucceed()],
-      ),
+      appBar: SecondaryAppBar(title: 'account_contact_us_title'.tr()),
+      body: _buildContactUsSucceed(),
       bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return AppBar(
-      elevation: 0,
-      leading: IconButton(
-        onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
-      ),
-      centerTitle: true,
-      title: Text(
-        'account_contact_us_title'.tr(),
-        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
-      ),
     );
   }
 

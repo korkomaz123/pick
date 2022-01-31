@@ -5,7 +5,6 @@ import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/product_v_card.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
@@ -60,7 +59,6 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
       key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, isCenter: false),
-      drawer: MarkaaSideMenu(),
       body: Stack(
         children: [
           _buildBrandBar(),
@@ -118,7 +116,7 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
       child: Container(
         width: 375.w,
         height: 40.h,
-        color: primarySwatchColor,
+        color: Colors.white,
         alignment: Alignment.center,
         padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 10.h),
         child: Stack(
@@ -130,7 +128,7 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    child: Icon(Icons.arrow_back_ios, color: Colors.white, size: 20.sp),
+                    child: Icon(Icons.arrow_back_ios, color: primarySwatchColor, size: 20.sp),
                     onTap: () => Navigator.pop(context),
                   ),
                 ],
@@ -140,7 +138,7 @@ class _InfollowencerProductsPageState extends State<InfollowencerProductsPage> {
               alignment: Alignment.center,
               child: Text(
                 '${_info['firstname'] ?? ''} ${_info['lastname'] ?? ''}',
-                style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
+                style: mediumTextStyle.copyWith(color: primarySwatchColor, fontSize: 17.sp),
               ),
             )
           ],

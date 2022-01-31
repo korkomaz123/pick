@@ -3,11 +3,10 @@ import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/account_change_notifier.dart';
-import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_input_field.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
+import 'package:markaa/src/components/secondary_app_bar.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/theme/icons.dart';
@@ -67,59 +66,32 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: MarkaaAppBar(scaffoldKey: _scaffoldKey),
-      drawer: MarkaaSideMenu(),
+      appBar: SecondaryAppBar(title: 'account_update_profile_title'.tr()),
       body: Consumer<AccountChangeNotifier>(
         builder: (_, __, ___) {
-          return Column(
-            children: [
-              _buildAppBar(),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        _buildProfilePicture(),
-                        _buildEmail(),
-                        _buildFullName(),
-                        SizedBox(height: 10.h),
-                        _buildPhoneNumber(),
-                        SizedBox(height: 10.h),
-                        _buildEmailAddress(),
-                        SizedBox(height: 30.h),
-                        _buildUpdateButton(),
-                        SizedBox(height: 30.h),
-                      ],
-                    ),
-                  ),
-                ),
+          return SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  _buildProfilePicture(),
+                  _buildEmail(),
+                  _buildFullName(),
+                  SizedBox(height: 10.h),
+                  _buildPhoneNumber(),
+                  SizedBox(height: 10.h),
+                  _buildEmailAddress(),
+                  SizedBox(height: 30.h),
+                  _buildUpdateButton(),
+                  SizedBox(height: 30.h),
+                ],
               ),
-            ],
+            ),
           );
         },
       ),
       bottomNavigationBar: MarkaaBottomBar(
         activeItem: BottomEnum.account,
-      ),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return AppBar(
-      elevation: 0,
-      toolbarHeight: 50.h,
-      leading: IconButton(
-        onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
-      ),
-      centerTitle: true,
-      title: Text(
-        'account_update_profile_title'.tr(),
-        style: mediumTextStyle.copyWith(
-          color: Colors.white,
-          fontSize: 17.sp,
-        ),
       ),
     );
   }
@@ -279,7 +251,7 @@ class _UpdateProfilePageState extends State<UpdateProfilePage> {
         title: 'update_button_title'.tr(),
         titleSize: 14.sp,
         titleColor: Colors.white,
-        buttonColor: primaryColor,
+        buttonColor: primarySwatchColor,
         borderColor: Colors.transparent,
         onPressed: () => _onSave(),
         radius: 30,

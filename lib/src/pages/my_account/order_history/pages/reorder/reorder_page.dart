@@ -1,9 +1,8 @@
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:markaa/src/change_notifier/address_change_notifier.dart';
-import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_review_product_card.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/components/secondary_app_bar.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/pages/my_account/order_history/widgets/order_address_bar.dart';
@@ -188,57 +187,34 @@ class _ReOrderPageState extends State<ReOrderPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
-      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, isCenter: false),
-      drawer: MarkaaSideMenu(),
-      body: Stack(
-        children: [
-          Column(children: [_buildAppBar(), _buildOrder()])
-        ],
-      ),
+      appBar: SecondaryAppBar(title: 'reorder_button_title'.tr()),
+      body: _buildOrder(),
       bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
     );
   }
 
-  Widget _buildAppBar() {
-    return AppBar(
-      elevation: 0,
-      toolbarHeight: 50.h,
-      leading: IconButton(
-        onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
-      ),
-      centerTitle: true,
-      title: Text(
-        'reorder_button_title'.tr(),
-        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
-      ),
-    );
-  }
-
   Widget _buildOrder() {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 20.h),
-          child: Column(
-            children: [
-              _buildOrderNo(),
-              SizedBox(height: 10.h),
-              _buildOrderDate(),
-              Divider(color: greyColor, thickness: 0.5.h),
-              _buildOrderStatus(),
-              Divider(color: greyColor, thickness: 0.5.h),
-              _buildOrderItems(),
-              SizedBox(height: 20.h),
-              _buildOrderPaymentMethod(),
-              Divider(color: greyColor, thickness: 0.5.h),
-              _buildSubtotal(),
-              _buildShippingCost(),
-              _buildTotal(),
-              OrderAddressBar(address: order!.address),
-              _buildNextButton(),
-            ],
-          ),
+    return SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 20.h),
+        child: Column(
+          children: [
+            _buildOrderNo(),
+            SizedBox(height: 10.h),
+            _buildOrderDate(),
+            Divider(color: greyColor, thickness: 0.5.h),
+            _buildOrderStatus(),
+            Divider(color: greyColor, thickness: 0.5.h),
+            _buildOrderItems(),
+            SizedBox(height: 20.h),
+            _buildOrderPaymentMethod(),
+            Divider(color: greyColor, thickness: 0.5.h),
+            _buildSubtotal(),
+            _buildShippingCost(),
+            _buildTotal(),
+            OrderAddressBar(address: order!.address),
+            _buildNextButton(),
+          ],
         ),
       ),
     );

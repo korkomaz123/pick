@@ -3,9 +3,8 @@ import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/account_change_notifier.dart';
-import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/components/secondary_app_bar.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/pages/my_account/widgets/live_chat.dart';
@@ -69,8 +68,7 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
-      drawer: MarkaaSideMenu(),
+      appBar: SecondaryAppBar(title: 'bottom_account'.tr()),
       drawerEnableOpenDragGesture: false,
       body: Consumer<AccountChangeNotifier>(
         builder: (_, __, ___) {

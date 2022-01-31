@@ -275,7 +275,7 @@ class _ProductVVCardState extends State<ProductVVCard> with TickerProviderStateM
                             titleColor: Colors.white,
                             titleSize: 14.sp,
                             borderColor: Colors.transparent,
-                            buttonColor: primaryColor,
+                            buttonColor: primarySwatchColor,
                             onPressed: () => _onAddProductToCart(),
                           ),
                         ),

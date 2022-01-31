@@ -179,7 +179,7 @@ class _MyCartQuickAccessLoginDialogState extends State<MyCartQuickAccessLoginDia
               title: 'continue_with_facebook'.tr(),
               titleSize: 12.sp,
               titleColor: Colors.white,
-              buttonColor: primaryColor,
+              buttonColor: primarySwatchColor,
               borderColor: greyLightColor,
               icon: SvgPicture.asset(facebookCircleIcon),
               radius: 30.sp,

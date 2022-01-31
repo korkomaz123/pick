@@ -3,7 +3,6 @@ import 'package:markaa/src/change_notifier/category_change_notifier.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -46,53 +45,29 @@ class _CategoryListPageState extends State<CategoryListPage> with WidgetsBinding
       key: scaffoldKey,
       backgroundColor: Colors.white,
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, isCenter: false),
-      drawer: MarkaaSideMenu(),
-      body: Column(
-        children: [
-          _buildAppBar(),
-          Consumer<HomeChangeNotifier>(
-            builder: (_, _homeChangeNotifier, ___) {
-              categories = _homeChangeNotifier.categories;
-              return Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: List.generate(
-                      categories.length,
-                      (index) => Column(
-                        children: [
-                          Container(
-                            key: activeIndex == index ? dataKey : null,
-                            child: _buildCategoryCard(categories[index]),
-                          ),
-                          if (activeIndex == index) ...[_buildSubcategoriesList(categories[index])],
-                          SizedBox(height: 6.h),
-                        ],
-                      ),
+      body: Consumer<HomeChangeNotifier>(
+        builder: (_, _homeChangeNotifier, ___) {
+          categories = _homeChangeNotifier.categories;
+          return SingleChildScrollView(
+            child: Column(
+              children: List.generate(
+                categories.length,
+                (index) => Column(
+                  children: [
+                    Container(
+                      key: activeIndex == index ? dataKey : null,
+                      child: _buildCategoryCard(categories[index]),
                     ),
-                  ),
+                    if (activeIndex == index) ...[_buildSubcategoriesList(categories[index])],
+                    SizedBox(height: 6.h),
+                  ],
                 ),
-              );
-            },
-          ),
-        ],
+              ),
+            ),
+          );
+        },
       ),
       bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.category),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return Container(
-      width: 375.w,
-      height: 40.h,
-      color: primarySwatchColor,
-      padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 10.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildCategoryButton(),
-          _buildBrandButton(),
-        ],
-      ),
     );
   }
 
@@ -236,56 +211,6 @@ class _CategoryListPageState extends State<CategoryListPage> with WidgetsBinding
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryButton() {
-    return Container(
-      child: MaterialButton(
-        onPressed: () => null,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(lang == 'en' ? 30 : 0),
-            bottomLeft: Radius.circular(lang == 'en' ? 30 : 0),
-            topRight: Radius.circular(lang == 'ar' ? 30 : 0),
-            bottomRight: Radius.circular(lang == 'ar' ? 30 : 0),
-          ),
-        ),
-        color: Colors.white.withOpacity(0.4),
-        elevation: 0,
-        child: Text(
-          'home_categories'.tr(),
-          style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 12.sp),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBrandButton() {
-    return Container(
-      child: MaterialButton(
-        onPressed: () {
-          Navigator.popUntil(
-            context,
-            (route) => route.settings.name == Routes.home,
-          );
-          Navigator.pushNamed(context, Routes.brandList);
-        },
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(lang == 'ar' ? 30 : 0),
-            bottomLeft: Radius.circular(lang == 'ar' ? 30 : 0),
-            topRight: Radius.circular(lang == 'en' ? 30 : 0),
-            bottomRight: Radius.circular(lang == 'en' ? 30 : 0),
-          ),
-        ),
-        color: Colors.white,
-        elevation: 0,
-        child: Text(
-          'brands_title'.tr(),
-          style: mediumTextStyle.copyWith(color: greyColor, fontSize: 12.sp),
-        ),
       ),
     );
   }

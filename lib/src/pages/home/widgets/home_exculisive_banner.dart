@@ -30,7 +30,7 @@ class _HomeExculisiveBannerState extends State<HomeExculisiveBanner> {
         children: [
           Container(
             width: designWidth.w,
-            height: designWidth.w * (495 / 1466),
+            height: designWidth.w * (864 / 1466),
             child: Swiper(
               itemCount: widget.homeChangeNotifier.exculisiveBanners!.length,
               autoplay: false,
@@ -43,6 +43,7 @@ class _HomeExculisiveBannerState extends State<HomeExculisiveBanner> {
                   onTap: () => ActionHandler.onClickBanner(banner, context),
                   child: CachedNetworkImage(
                     imageUrl: banner.bannerImage ?? '',
+                    fit: BoxFit.fill,
                     errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),
                   ),
                 );

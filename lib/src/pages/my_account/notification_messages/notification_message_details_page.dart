@@ -1,6 +1,5 @@
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/data/models/message_entity.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -26,7 +25,6 @@ class _NotificationMessageDetailsPageState extends State<NotificationMessageDeta
     return Scaffold(
       key: scaffoldKey,
       appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
-      drawer: MarkaaSideMenu(),
       body: Column(
         children: [_buildAppBar(), _buildMessage()],
       ),
@@ -37,14 +35,15 @@ class _NotificationMessageDetailsPageState extends State<NotificationMessageDeta
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0,
+      backgroundColor: Colors.white,
       leading: IconButton(
         onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
+        icon: Icon(Icons.arrow_back_ios, color: primarySwatchColor, size: 22.sp),
       ),
       centerTitle: true,
       title: Text(
         'account_notification_message_title'.tr(),
-        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
+        style: mediumTextStyle.copyWith(color: primarySwatchColor, fontSize: 17.sp),
       ),
     );
   }

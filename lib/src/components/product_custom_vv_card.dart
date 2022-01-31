@@ -287,7 +287,7 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerPr
                               titleColor: Colors.white,
                               titleSize: 14.sp,
                               borderColor: Colors.transparent,
-                              buttonColor: primaryColor,
+                              buttonColor: primarySwatchColor,
                               onPressed: () => _onAddProductToCart(),
                             ),
                           ),

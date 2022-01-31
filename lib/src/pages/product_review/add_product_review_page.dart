@@ -133,8 +133,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
                   controller: usernameController,
                   fontSize: 16.sp,
                   hint: 'username'.tr(),
-                  validator: (value) =>
-                      value.isEmpty ? 'required_field'.tr() : null,
+                  validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                   inputType: TextInputType.text,
                   padding: 0,
                 ),
@@ -150,8 +149,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
                 controller: titleController,
                 fontSize: 16.sp,
                 hint: 'add_review_form_review_title'.tr(),
-                validator: (value) =>
-                    value.isEmpty ? 'required_field'.tr() : null,
+                validator: (value) => value.isEmpty ? 'required_field'.tr() : null,
                 inputType: TextInputType.text,
                 padding: 0,
               ),
@@ -175,8 +173,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
                 fillColor: Colors.white,
                 bordered: true,
                 borderColor: greyColor,
-                validator: (value) =>
-                    value!.isEmpty ? 'required_field'.tr() : null,
+                validator: (value) => value!.isEmpty ? 'required_field'.tr() : null,
                 maxLines: 6,
               ),
             ),
@@ -186,7 +183,7 @@ class _AddProductReviewPageState extends State<AddProductReviewPage> {
                 title: 'submit_button_title'.tr(),
                 titleSize: 16.sp,
                 titleColor: Colors.white,
-                buttonColor: primaryColor,
+                buttonColor: primarySwatchColor,
                 radius: 30,
                 borderColor: Colors.transparent,
                 onPressed: () => _onAddReview(),

@@ -42,6 +42,8 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
       itemCount: widget.homeChangeNotifier.sliderImages.length,
       autoplay: true,
       curve: Curves.easeInOutCubic,
+      viewportFraction: 0.95,
+      scale: 0.9,
       onIndexChanged: (value) => setState(() => activeIndex = value),
       itemBuilder: (context, index) {
         final banner = widget.homeChangeNotifier.sliderImages[index];

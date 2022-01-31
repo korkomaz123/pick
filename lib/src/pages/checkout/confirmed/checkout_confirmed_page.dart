@@ -115,7 +115,7 @@ class _CheckoutConfirmedPageState extends State<CheckoutConfirmedPage> {
         title: 'checkout_show_all_ordered_button_title'.tr(),
         titleSize: 12.sp,
         titleColor: Colors.white70,
-        buttonColor: primaryColor,
+        buttonColor: primarySwatchColor,
         borderColor: Colors.transparent,
         onPressed: () => Navigator.popAndPushNamed(context, Routes.orderHistory),
         radius: 30,

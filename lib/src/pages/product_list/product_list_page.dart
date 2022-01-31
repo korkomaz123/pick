@@ -3,9 +3,8 @@ import 'package:markaa/src/change_notifier/filter_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/change_notifier/scroll_chagne_notifier.dart';
 import 'package:markaa/src/change_notifier/category_change_notifier.dart';
-import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/components/secondary_app_bar.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/pages/filter/filter_page.dart';
@@ -94,15 +93,15 @@ class _ProductListPageState extends State<ProductListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Colors.white,
-      appBar: MarkaaAppBar(
-        scaffoldKey: scaffoldKey,
-        isCenter: false,
-      ),
-      drawer: MarkaaSideMenu(),
+      backgroundColor: backgroundColor,
+      appBar: SecondaryAppBar(),
       body: Stack(
         children: [
-          if (isFromBrand!) ...[_buildBrandBar()],
+          if (isFromBrand!) ...[
+            _buildBrandBar()
+          ] else ...[
+            _buildAppBar(),
+          ],
           Consumer<CategoryChangeNotifier>(
             builder: (_, model, ___) {
               if (!model.isLoading) {
@@ -118,10 +117,10 @@ class _ProductListPageState extends State<ProductListPage> {
                 if (subCategories!.length > activeSubcategoryIndex) {
                   return Consumer<ScrollChangeNotifier>(
                     builder: (ctx, scrollNotifier, child) {
-                      double extra = scrollChangeNotifier!.showBrandBar ? 0 : 75;
+                      double extra = scrollChangeNotifier!.showBrandBar ? 0 : 70.h;
                       double pos = !scrollChangeNotifier!.showScrollBar ? 40 : 0;
                       return AnimatedPositioned(
-                        top: isFromBrand! ? 120.h - extra : 45.h,
+                        top: isFromBrand! ? 70.h - extra : 30.h,
                         left: 0,
                         right: 0,
                         bottom: 0,
@@ -151,7 +150,6 @@ class _ProductListPageState extends State<ProductListPage> {
               }
             },
           ),
-          _buildAppBar(),
         ],
       ),
       bottomNavigationBar: MarkaaBottomBar(
@@ -167,46 +165,29 @@ class _ProductListPageState extends State<ProductListPage> {
       right: 0,
       child: Container(
         width: 375.w,
-        height: 40.h,
-        color: primarySwatchColor,
+        height: 30.h,
+        color: Colors.white,
         alignment: Alignment.center,
-        padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 10.h),
+        padding: EdgeInsets.symmetric(horizontal: 10.w),
         child: Stack(
           alignment: AlignmentDirectional.center,
           children: [
-            Align(
-              alignment: Alignment.center,
+            Center(
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   InkWell(
-                    child: Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                      size: 20.sp,
-                    ),
-                    onTap: () => Navigator.pop(context),
+                    onTap: () => _onSortBy(),
+                    child: Icon(Icons.sort, color: primarySwatchColor, size: 25.sp),
                   ),
-                  Row(
-                    children: [
-                      InkWell(
-                        onTap: () => _onSortBy(),
-                        child: Icon(
-                          Icons.sort,
-                          color: Colors.white,
-                          size: 25.sp,
-                        ),
-                      ),
-                      SizedBox(width: 10.w),
-                      InkWell(
-                        onTap: () => _showFilterDialog(),
-                        child: Container(
-                          width: 20.w,
-                          height: 17.h,
-                          child: SvgPicture.asset(filterIcon),
-                        ),
-                      ),
-                    ],
+                  SizedBox(width: 10.w),
+                  InkWell(
+                    onTap: () => _showFilterDialog(),
+                    child: Container(
+                      width: 20.w,
+                      height: 17.h,
+                      child: SvgPicture.asset(filterIcon, color: primarySwatchColor),
+                    ),
                   ),
                 ],
               ),
@@ -220,7 +201,7 @@ class _ProductListPageState extends State<ProductListPage> {
                         ? category!.name.tr()
                         : category!.name,
                 style: mediumTextStyle.copyWith(
-                  color: Colors.white,
+                  color: primaryColor,
                   fontSize: 17.sp,
                 ),
               ),
@@ -236,31 +217,57 @@ class _ProductListPageState extends State<ProductListPage> {
       builder: (ctx, notifier, child) {
         double extra = scrollChangeNotifier!.showBrandBar ? 0 : 40;
         return AnimatedPositioned(
-          top: 40.h - extra,
+          top: 0 - extra,
           left: 0,
           right: 0,
           duration: Duration(milliseconds: 350),
           child: Container(
             width: 375.w,
-            height: 80.h,
-            margin: EdgeInsets.only(bottom: 8.h),
+            height: 70.h,
             alignment: Alignment.center,
             color: Colors.white,
-            child: CachedNetworkImage(
-              imageUrl: brand?.brandImage ?? '',
-              width: 120.w,
-              height: 60.h,
-              fit: BoxFit.fitHeight,
-              errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
-              progressIndicatorBuilder: (_, __, ___) {
-                return CachedNetworkImage(
-                  imageUrl: brand?.brandThumbnail ?? '',
-                  width: 120.w,
-                  height: 60.h,
-                  fit: BoxFit.fitHeight,
-                  errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
-                );
-              },
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: Stack(
+              children: [
+                Center(
+                  child: CachedNetworkImage(
+                    imageUrl: brand?.brandImage ?? '',
+                    width: 120.w,
+                    height: 60.h,
+                    fit: BoxFit.fitHeight,
+                    errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
+                    progressIndicatorBuilder: (_, __, ___) {
+                      return CachedNetworkImage(
+                        imageUrl: brand?.brandThumbnail ?? '',
+                        width: 120.w,
+                        height: 60.h,
+                        fit: BoxFit.fitHeight,
+                        errorWidget: (_, __, ___) => Center(child: Icon(Icons.image, size: 20)),
+                      );
+                    },
+                  ),
+                ),
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      InkWell(
+                        onTap: () => _onSortBy(),
+                        child: Icon(Icons.sort, color: primarySwatchColor, size: 25.sp),
+                      ),
+                      SizedBox(width: 10.w),
+                      InkWell(
+                        onTap: () => _showFilterDialog(),
+                        child: Container(
+                          width: 20.w,
+                          height: 17.h,
+                          child: SvgPicture.asset(filterIcon, color: primarySwatchColor),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         );

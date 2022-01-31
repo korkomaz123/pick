@@ -1,7 +1,6 @@
-import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/no_available_data.dart';
+import 'package:markaa/src/components/secondary_app_bar.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/address_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
@@ -68,81 +67,51 @@ class _ShippingAddressPageState extends State<ShippingAddressPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: MarkaaAppBar(
-        scaffoldKey: scaffoldKey,
-        isCenter: false,
-      ),
-      drawer: MarkaaSideMenu(),
-      body: Column(
-        children: [
-          _buildAppBar(),
-          _buildAddressList(),
-        ],
-      ),
+      appBar: SecondaryAppBar(title: 'shipping_address_title'.tr()),
+      body: _buildAddressList(),
       bottomNavigationBar: MarkaaBottomBar(
         activeItem: BottomEnum.account,
       ),
     );
   }
 
-  Widget _buildAppBar() {
-    return AppBar(
-      elevation: 0,
-      toolbarHeight: 50.h,
-      leading: IconButton(
-        onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
-      ),
-      centerTitle: true,
-      title: Text(
-        'shipping_address_title'.tr(),
-        style: mediumTextStyle.copyWith(
-          color: Colors.white,
-          fontSize: 17.sp,
-        ),
-      ),
-    );
-  }
-
   Widget _buildAddressList() {
-    return Expanded(
-      child: Stack(
-        children: [
-          SmartRefresher(
-            enablePullDown: true,
-            enablePullUp: false,
-            header: MaterialClassicHeader(color: primaryColor),
-            controller: _refreshController,
-            onRefresh: _onRefresh,
-            onLoading: () => null,
-            child: Consumer<AddressChangeNotifier>(
-              builder: (_, notifier, ___) {
-                model = notifier;
-                if (model.customerAddressKeys.isEmpty) {
-                  return NoAvailableData(
-                    message: 'no_saved_addresses'.tr(),
-                  );
-                } else {
-                  return SingleChildScrollView(
-                    child: Column(
-                      children: List.generate(
-                        model.customerAddressKeys.length,
-                        (index) => _buildAddressCard(model.customerAddressKeys[index]),
-                      )..add(SizedBox(height: 60.h)),
-                    ),
-                  );
-                }
-              },
-            ),
+    return Stack(
+      children: [
+        SmartRefresher(
+          enablePullDown: true,
+          enablePullUp: false,
+          header: MaterialClassicHeader(color: primaryColor),
+          controller: _refreshController,
+          onRefresh: _onRefresh,
+          onLoading: () => null,
+          child: Consumer<AddressChangeNotifier>(
+            builder: (_, notifier, ___) {
+              model = notifier;
+              if (model.customerAddressKeys.isEmpty) {
+                return NoAvailableData(
+                  message: 'no_saved_addresses'.tr(),
+                );
+              } else {
+                return SingleChildScrollView(
+                  child: Column(
+                    children: List.generate(
+                      model.customerAddressKeys.length,
+                      (index) => _buildAddressCard(model.customerAddressKeys[index]),
+                    )..add(SizedBox(height: 60.h)),
+                  ),
+                );
+              }
+            },
           ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: _buildAddNewButton(),
-          ),
-        ],
-      ),
+        ),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: _buildAddNewButton(),
+        ),
+      ],
     );
   }
 

@@ -150,7 +150,7 @@ class _PaymentAddressState extends State<PaymentAddress> {
                           title: 'add_new_address_button_title'.tr(),
                           titleSize: 9.sp,
                           titleColor: Colors.white,
-                          buttonColor: primaryColor,
+                          buttonColor: primarySwatchColor,
                           borderColor: Colors.transparent,
                           onPressed: _onAddNewAddress,
                           isBold: true,

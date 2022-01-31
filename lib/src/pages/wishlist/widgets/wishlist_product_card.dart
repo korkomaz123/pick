@@ -82,11 +82,12 @@ class WishlistProductCard extends StatelessWidget {
                     if (product.stockQty! > 0) ...[
                       Container(
                         width: 130.w,
+                        height: 40.h,
                         child: MarkaaTextButton(
                           title: 'wishlist_add_cart_button_title'.tr(),
                           titleSize: 15.sp,
                           titleColor: Colors.white,
-                          buttonColor: primaryColor,
+                          buttonColor: primarySwatchColor,
                           borderColor: Colors.transparent,
                           onPressed: onAddToCart,
                           radius: 6.sp,

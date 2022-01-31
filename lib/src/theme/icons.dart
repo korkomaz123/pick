@@ -1,4 +1,5 @@
 const String iconsAssetPath = 'lib/public/icons';
+const String primaryLogo = '$iconsAssetPath/primary-logo.svg';
 const String vLogoIcon = '$iconsAssetPath/vertical-logo.svg';
 const String hLogoIcon = '$iconsAssetPath/horizontal-logo.svg';
 const String loginIcon = '$iconsAssetPath/login-icon.svg';

@@ -1,9 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_input_field.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/components/secondary_app_bar.dart';
 import 'package:markaa/src/data/models/order_entity.dart';
 import 'package:markaa/src/change_notifier/order_change_notifier.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -81,38 +80,14 @@ class _CancelOrderInfoPageState extends State<CancelOrderInfoPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
-      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, isCenter: false),
-      drawer: MarkaaSideMenu(),
-      body: Column(
-        children: [
-          _buildAppBar(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Form(
-                key: formKey,
-                child: Column(
-                  children: [_buildAdditionalInfo(), _buildImageUploader(), _buildSubmitButton()],
-                ),
-              ),
-            ),
+      appBar: SecondaryAppBar(title: 'cancel_order_button_title'.tr()),
+      body: SingleChildScrollView(
+        child: Form(
+          key: formKey,
+          child: Column(
+            children: [_buildAdditionalInfo(), _buildImageUploader(), _buildSubmitButton()],
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return AppBar(
-      elevation: 0,
-      toolbarHeight: 50.h,
-      leading: IconButton(
-        onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
-      ),
-      centerTitle: true,
-      title: Text(
-        'cancel_order_button_title'.tr(),
-        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
+        ),
       ),
     );
   }

@@ -1,8 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/src/change_notifier/markaa_app_change_notifier.dart';
-import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
+import 'package:markaa/src/components/secondary_app_bar.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/cart_item_entity.dart';
 import 'package:markaa/src/data/models/enum.dart';
@@ -139,68 +138,47 @@ class _CancelOrderPageState extends State<CancelOrderPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
-      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey, isCenter: false),
-      drawer: MarkaaSideMenu(),
-      body: Column(
-        children: [_buildAppBar(), _buildOrder()],
-      ),
+      appBar: SecondaryAppBar(title: 'cancel_order_button_title'.tr()),
+      body: _buildOrder(),
       bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
     );
   }
 
-  Widget _buildAppBar() {
-    return AppBar(
-      elevation: 0,
-      toolbarHeight: 50.h,
-      leading: IconButton(
-        onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
-      ),
-      centerTitle: true,
-      title: Text(
-        'cancel_order_button_title'.tr(),
-        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
-      ),
-    );
-  }
-
   Widget _buildOrder() {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 20.h),
-          child: Column(
-            children: [
-              _buildOrderNo(),
-              SizedBox(height: 10.h),
-              _buildOrderDate(),
-              Divider(color: greyColor, thickness: 0.5.h),
-              _buildOrderStatus(),
-              Divider(color: greyColor, thickness: 0.5.h),
-              Consumer<MarkaaAppChangeNotifier>(
-                builder: (_, __, ___) {
-                  return _buildOrderItems();
-                },
-              ),
-              SizedBox(height: 20.h),
-              _buildOrderPaymentMethod(),
-              Divider(color: greyColor, thickness: 0.5.h),
-              Consumer<MarkaaAppChangeNotifier>(
-                builder: (_, __, ___) {
-                  return Column(
-                    children: [
-                      _buildCancelRequestCost(),
-                      _buildSubtotal(),
-                      _buildShippingCost(),
-                      if (widget.order.discountAmount != 0) ...[_buildDiscount()],
-                      _buildTotal(),
-                    ],
-                  );
-                },
-              ),
-              _buildNextButton(),
-            ],
-          ),
+    return SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 20.h),
+        child: Column(
+          children: [
+            _buildOrderNo(),
+            SizedBox(height: 10.h),
+            _buildOrderDate(),
+            Divider(color: greyColor, thickness: 0.5.h),
+            _buildOrderStatus(),
+            Divider(color: greyColor, thickness: 0.5.h),
+            Consumer<MarkaaAppChangeNotifier>(
+              builder: (_, __, ___) {
+                return _buildOrderItems();
+              },
+            ),
+            SizedBox(height: 20.h),
+            _buildOrderPaymentMethod(),
+            Divider(color: greyColor, thickness: 0.5.h),
+            Consumer<MarkaaAppChangeNotifier>(
+              builder: (_, __, ___) {
+                return Column(
+                  children: [
+                    _buildCancelRequestCost(),
+                    _buildSubtotal(),
+                    _buildShippingCost(),
+                    if (widget.order.discountAmount != 0) ...[_buildDiscount()],
+                    _buildTotal(),
+                  ],
+                );
+              },
+            ),
+            _buildNextButton(),
+          ],
         ),
       ),
     );

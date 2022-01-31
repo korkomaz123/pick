@@ -1,6 +1,6 @@
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/no_available_data.dart';
+import 'package:markaa/src/components/secondary_app_bar.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -49,47 +49,36 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      drawer: MarkaaSideMenu(),
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-              backgroundColor: Colors.white,
-              expandedHeight: 100.h,
-              floating: false,
-              pinned: true,
-              leading: SizedBox.shrink(),
-              flexibleSpace: FlexibleSpaceBar(
-                titlePadding: EdgeInsetsDirectional.only(bottom: 16.0),
-                centerTitle: false,
-                title: _buildTitleBar(),
-              ),
-            ),
-          ];
-        },
-        body: SmartRefresher(
-          enablePullDown: true,
-          enablePullUp: false,
-          header: MaterialClassicHeader(color: primaryColor),
-          controller: refreshController,
-          onRefresh: _onRefresh,
-          onLoading: null,
-          child: Consumer<OrderChangeNotifier>(
-            builder: (_, model, __) {
-              if (model.ordersMap.isEmpty) {
-                return Center(child: NoAvailableData(message: 'no_orders_list'.tr()));
-              } else {
-                return SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                  child: Column(
-                    children: model.keys.map((key) {
-                      return OrderCard(order: model.ordersMap[key]!);
-                    }).toList(),
+      appBar: SecondaryAppBar(title: 'my_orders'.tr()),
+      body: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: false,
+        header: MaterialClassicHeader(color: primaryColor),
+        controller: refreshController,
+        onRefresh: _onRefresh,
+        onLoading: null,
+        child: Consumer<OrderChangeNotifier>(
+          builder: (_, model, __) {
+            if (model.ordersMap.isEmpty) {
+              return Center(child: NoAvailableData(message: 'no_orders_list'.tr()));
+            } else {
+              return Column(
+                children: [
+                  _buildTitleBar(),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                      child: Column(
+                        children: model.keys.map((key) {
+                          return OrderCard(order: model.ordersMap[key]!);
+                        }).toList(),
+                      ),
+                    ),
                   ),
-                );
-              }
-            },
-          ),
+                ],
+              );
+            }
+          },
         ),
       ),
       bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
@@ -99,26 +88,16 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   Widget _buildTitleBar() {
     return Container(
       width: 375.w,
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'my_orders'.tr(),
-            style: mediumTextStyle.copyWith(color: darkColor, fontSize: 16.sp),
+            'total'.tr() + ' ',
+            style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 10.sp),
           ),
-          Row(
-            children: [
-              Text(
-                'total'.tr() + ' ',
-                style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 10.sp),
-              ),
-              Text(
-                'items'.tr().replaceFirst('0', '${orderChangeNotifier.ordersMap.keys.toList().length}'),
-                style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 11.sp),
-              ),
-            ],
+          Text(
+            'items'.tr().replaceFirst('0', '${orderChangeNotifier.ordersMap.keys.toList().length}'),
+            style: mediumTextStyle.copyWith(color: primaryColor, fontSize: 11.sp),
           ),
         ],
       ),

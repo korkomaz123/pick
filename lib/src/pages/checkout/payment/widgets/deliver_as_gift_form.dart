@@ -141,7 +141,7 @@ class _DeliverAsGiftFormState extends State<DeliverAsGiftForm> {
                   title: 'done'.tr(),
                   titleSize: 14.sp,
                   titleColor: Colors.white,
-                  buttonColor: primaryColor,
+                  buttonColor: primarySwatchColor,
                   borderColor: primaryColor,
                   onPressed: _onDone,
                   radius: 30.sp,

@@ -1,13 +1,11 @@
 import 'package:markaa/src/change_notifier/wishlist_change_notifier.dart';
-import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/no_available_data.dart';
+import 'package:markaa/src/components/secondary_app_bar.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/pages/wishlist/widgets/wishlist_product_card.dart';
 import 'package:markaa/src/routes/routes.dart';
-import 'package:markaa/src/theme/styles.dart';
 import 'package:markaa/src/theme/theme.dart';
 import 'package:markaa/src/change_notifier/my_cart_change_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -51,32 +49,17 @@ class _WishlistPageState extends State<WishlistPage> with TickerProviderStateMix
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
-      appBar: MarkaaAppBar(
-        scaffoldKey: scaffoldKey,
-        isCenter: false,
-      ),
-      drawer: MarkaaSideMenu(),
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              _buildAppBar(),
-              Consumer<WishlistChangeNotifier>(
-                builder: (_, model, ___) {
-                  if (model.wishlistItemsCount > 0) {
-                    return _buildWishlistItems();
-                  } else {
-                    return Expanded(
-                      child: NoAvailableData(
-                        message: 'wishlist_empty',
-                      ),
-                    );
-                  }
-                },
-              ),
-            ],
-          ),
-        ],
+      appBar: SecondaryAppBar(title: 'account_wishlist_title'.tr()),
+      body: Consumer<WishlistChangeNotifier>(
+        builder: (_, model, ___) {
+          if (model.wishlistItemsCount > 0) {
+            return _buildWishlistItems();
+          } else {
+            return NoAvailableData(
+              message: 'wishlist_empty',
+            );
+          }
+        },
       ),
       bottomNavigationBar: MarkaaBottomBar(
         activeItem: BottomEnum.wishlist,
@@ -84,72 +67,36 @@ class _WishlistPageState extends State<WishlistPage> with TickerProviderStateMix
     );
   }
 
-  Widget _buildAppBar() {
-    return Container(
-      width: 375.w,
-      height: 40.h,
-      color: primarySwatchColor,
-      padding: EdgeInsets.only(
-        left: 10.w,
-        right: 10.w,
-        bottom: 10.h,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          InkWell(
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-              size: 20.sp,
-            ),
-            onTap: () => Navigator.pop(context),
-          ),
-          Text(
-            'account_wishlist_title'.tr(),
-            style: mediumTextStyle.copyWith(
-              color: Colors.white,
-              fontSize: 17.sp,
-            ),
-          ),
-          SizedBox.shrink(),
-        ],
-      ),
-    );
-  }
-
   Widget _buildWishlistItems() {
     final keys = wishlistChangeNotifier!.wishlistItemsMap.keys.toList();
-    return Expanded(
-      child: ListView.builder(
-        itemCount: wishlistChangeNotifier!.wishlistItemsCount,
-        itemBuilder: (context, index) {
-          final product = wishlistChangeNotifier!.wishlistItemsMap[keys[index]];
-          return Container(
-            width: 375.w,
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
-            child: Column(
-              children: [
-                InkWell(
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    Routes.product,
-                    arguments: product,
-                  ),
-                  child: WishlistProductCard(
-                    product: product!,
-                    onRemoveWishlist: () => _onRemoveWishlist(product, true),
-                    onAddToCart: () => _onAddToCart(product),
-                  ),
+    return ListView.builder(
+      itemCount: wishlistChangeNotifier!.wishlistItemsCount,
+      itemBuilder: (context, index) {
+        final product = wishlistChangeNotifier!.wishlistItemsMap[keys[index]];
+        return Container(
+          width: 375.w,
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          child: Column(
+            children: [
+              InkWell(
+                onTap: () => Navigator.pushNamed(
+                  context,
+                  Routes.product,
+                  arguments: product,
                 ),
-                index < (wishlistChangeNotifier!.wishlistItemsCount - 1)
-                    ? Divider(color: greyColor, thickness: 0.5)
-                    : SizedBox.shrink(),
-              ],
-            ),
-          );
-        },
-      ),
+                child: WishlistProductCard(
+                  product: product!,
+                  onRemoveWishlist: () => _onRemoveWishlist(product, true),
+                  onAddToCart: () => _onAddToCart(product),
+                ),
+              ),
+              index < (wishlistChangeNotifier!.wishlistItemsCount - 1)
+                  ? Divider(color: greyColor, thickness: 0.5)
+                  : SizedBox.shrink(),
+            ],
+          ),
+        );
+      },
     );
   }
 

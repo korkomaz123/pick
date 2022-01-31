@@ -3,7 +3,6 @@ import 'package:markaa/src/change_notifier/summer_collection_notifier.dart';
 import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
 import 'package:markaa/src/components/markaa_page_loading_kit.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/data/models/index.dart';
 import 'package:markaa/src/data/models/summer_collection_entity.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -93,7 +92,6 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
         scaffoldKey: scaffoldKey,
         isCenter: false,
       ),
-      drawer: MarkaaSideMenu(),
       body: Stack(
         children: [
           _buildAppBar(),
@@ -140,7 +138,7 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
       child: Container(
         width: 375.w,
         height: 40.h,
-        color: primarySwatchColor,
+        color: Colors.white,
         alignment: Alignment.center,
         padding: EdgeInsets.only(
           left: 10.w,
@@ -158,7 +156,7 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
                   InkWell(
                     child: Icon(
                       Icons.arrow_back_ios,
-                      color: Colors.white,
+                      color: primarySwatchColor,
                       size: 20.sp,
                     ),
                     onTap: () => Navigator.pop(context),
@@ -171,7 +169,7 @@ class _SummerCollectionPageState extends State<SummerCollectionPage> {
               child: Text(
                 "summer_collection".tr(),
                 style: mediumTextStyle.copyWith(
-                  color: Colors.white,
+                  color: primarySwatchColor,
                   fontSize: 17.sp,
                 ),
               ),

@@ -1,8 +1,7 @@
 import 'package:markaa/src/change_notifier/account_change_notifier.dart';
-import 'package:markaa/src/components/markaa_app_bar.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
-import 'package:markaa/src/components/markaa_side_menu.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
+import 'package:markaa/src/components/secondary_app_bar.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/enum.dart';
 import 'package:markaa/src/routes/routes.dart';
@@ -51,47 +50,26 @@ class _ContactUsPageState extends State<ContactUsPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       key: scaffoldKey,
-      drawer: MarkaaSideMenu(),
-      appBar: MarkaaAppBar(scaffoldKey: scaffoldKey),
-      body: Column(
-        children: [_buildAppBar(), _buildContactUsForm()],
-      ),
+      appBar: SecondaryAppBar(title: 'account_contact_us_title'.tr()),
+      body: _buildContactUsForm(),
       bottomNavigationBar: MarkaaBottomBar(activeItem: BottomEnum.account),
     );
   }
 
-  Widget _buildAppBar() {
-    return AppBar(
-      elevation: 0,
-      toolbarHeight: 50.h,
-      leading: IconButton(
-        onPressed: () => Navigator.pop(context),
-        icon: Icon(Icons.arrow_back_ios, size: 22.sp),
-      ),
-      centerTitle: true,
-      title: Text(
-        'account_contact_us_title'.tr(),
-        style: mediumTextStyle.copyWith(color: Colors.white, fontSize: 17.sp),
-      ),
-    );
-  }
-
   Widget _buildContactUsForm() {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: Form(
-          key: formKey,
-          child: Column(
-            children: [
-              _buildFirstName(),
-              _buildPhoneNumber(),
-              _buildEmail(),
-              _buildMessageTitle(),
-              _buildMessage(),
-              _buildSendButton(),
-              _buildCallUs(),
-            ],
-          ),
+    return SingleChildScrollView(
+      child: Form(
+        key: formKey,
+        child: Column(
+          children: [
+            _buildFirstName(),
+            _buildPhoneNumber(),
+            _buildEmail(),
+            _buildMessageTitle(),
+            _buildMessage(),
+            _buildSendButton(),
+            _buildCallUs(),
+          ],
         ),
       ),
     );
@@ -228,7 +206,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
         title: 'send_button_title'.tr(),
         titleSize: 14.sp,
         titleColor: Colors.white,
-        buttonColor: primaryColor,
+        buttonColor: primarySwatchColor,
         borderColor: Colors.transparent,
         onPressed: () => _onSubmit(),
         radius: 30,
