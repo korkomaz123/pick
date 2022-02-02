@@ -30,13 +30,15 @@ class _HomeMegaBannerState extends State<HomeMegaBanner> {
     if (widget.homeChangeNotifier.megaBanners.isNotEmpty) {
       return Container(
         color: Colors.white,
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+        padding: EdgeInsets.symmetric(vertical: 10.h),
         child: Column(
           children: [
             Container(
               width: designWidth.w,
               height: designWidth.w * (864 / 1466),
               child: Swiper(
+                viewportFraction: 0.95,
+                scale: 0.9,
                 itemCount: widget.homeChangeNotifier.megaBanners.length,
                 autoplay: false,
                 autoplayDelay: 5000,

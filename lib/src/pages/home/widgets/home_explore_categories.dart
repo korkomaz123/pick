@@ -57,11 +57,11 @@ class _HomeExploreCategoriesState extends State<HomeExploreCategories> {
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 2.w),
+            width: 80.w,
             height: 30.h,
             child: MarkaaTextButton(
               title: 'view_all'.tr(),
-              titleSize: Preload.language == 'en' ? 12.sp : 10.sp,
+              titleSize: Preload.language == 'en' ? 14.sp : 12.sp,
               titleColor: primaryColor,
               buttonColor: Colors.white,
               borderColor: primaryColor,

@@ -30,8 +30,10 @@ class _HomeExculisiveBannerState extends State<HomeExculisiveBanner> {
         children: [
           Container(
             width: designWidth.w,
-            height: designWidth.w * (864 / 1466),
+            height: designWidth.w * (809 / 1125),
             child: Swiper(
+              viewportFraction: 0.95,
+              scale: 0.9,
               itemCount: widget.homeChangeNotifier.exculisiveBanners!.length,
               autoplay: false,
               autoplayDelay: 5000,

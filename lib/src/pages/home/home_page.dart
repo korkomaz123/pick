@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/change_notifier/product_change_notifier.dart';
 import 'package:markaa/src/components/markaa_bottom_bar.dart';
@@ -27,6 +28,7 @@ import 'widgets/home_mega_banner.dart';
 import 'widgets/home_new_arrivals.dart';
 import 'widgets/home_new_arrivals_banner.dart';
 import 'widgets/home_oriental_fragrances.dart';
+import 'widgets/home_perfumes.dart';
 import 'widgets/home_popup_dialog.dart';
 import 'widgets/home_recent.dart';
 import 'widgets/home_sale_brands.dart';
@@ -40,12 +42,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver, TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final ScrollController _scrollController = ScrollController();
+  final DynamicLinkService _dynamicLinkService = DynamicLinkService();
 
   late HomeChangeNotifier _homeProvider;
-  late ProductChangeNotifier _productChangeNotifier;
-
+  late ProductChangeNotifier _productProvider;
   late Communicator _communicator;
-  DynamicLinkService _dynamicLinkService = DynamicLinkService();
+
+  late AnimationController _animationController;
+  late Animation _animation;
 
   Future _loadHomePage() async {
     _homeProvider.loadPopup(_onShowPopup);
@@ -87,21 +92,42 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Ticker
   void initState() {
     WidgetsBinding.instance!.addObserver(this);
 
-    _productChangeNotifier = context.read<ProductChangeNotifier>();
+    _productProvider = context.read<ProductChangeNotifier>();
     _homeProvider = context.read<HomeChangeNotifier>();
     _communicator = Communicator(context: context);
     _communicator.subscribeToChangeNotifiers();
     _dynamicLinkService.initialDynamicLink();
     _dynamicLinkService.retrieveDynamicLink();
-    _productChangeNotifier.initialize();
+    _productProvider.initialize();
     _loadHomePage();
 
     super.initState();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+      reverseDuration: const Duration(milliseconds: 300),
+    );
+    _animation = Tween<double>(begin: 0, end: 1).animate(_animationController);
+
+    _scrollController.addListener(onScroll);
+  }
+
+  bool isStickyHeader = false;
+  onScroll() {
+    if (!isStickyHeader && _scrollController.position.pixels >= 90) {
+      isStickyHeader = true;
+      _animationController.forward();
+    } else if (isStickyHeader && _scrollController.position.pixels < 90) {
+      isStickyHeader = false;
+      _animationController.reverse();
+    }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance!.removeObserver(this);
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -119,30 +145,52 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver, Ticker
             return RefreshIndicator(
               onRefresh: () => _loadHomePage(),
               color: primaryColor,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    MarkaaSimpleAppBar(),
-                    HomeHeaderCarousel(homeChangeNotifier: _homeProvider),
-                    HomeFeaturedCategories(homeChangeNotifier: _homeProvider),
-                    HomeMegaBanner(homeChangeNotifier: _homeProvider),
-                    HomeShopByCategory(homeChangeNotifier: _homeProvider),
-                    HomeSaleBrands(homeChangeNotifier: _homeProvider),
-                    HomeBestDeals(homeChangeNotifier: _homeProvider),
-                    HomeFragrancesBanners(homeChangeNotifier: _homeProvider),
-                    HomeOrientalFragrances(homeChangeNotifier: _homeProvider),
-                    HomeCelebrity(homeChangeNotifier: _homeProvider),
-                    HomeGrooming(homeChangeNotifier: _homeProvider),
-                    HomeBestDealsBanner(homeChangeNotifier: _homeProvider),
-                    HomeNewArrivals(homeChangeNotifier: _homeProvider),
-                    HomeNewArrivalsBanner(homeChangeNotifier: _homeProvider),
-                    HomeBestWatches(homeChangeNotifier: _homeProvider),
-                    HomeAdvertise(homeChangeNotifier: _homeProvider),
-                    HomeSmartTech(homeChangeNotifier: _homeProvider),
-                    HomeDiscoverStores(homeChangeNotifier: _homeProvider),
-                    HomeRecent(homeChangeNotifier: _homeProvider),
-                  ],
-                ),
+              child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Column(
+                      children: [
+                        MarkaaSimpleAppBar(),
+                        HomeHeaderCarousel(homeChangeNotifier: _homeProvider),
+                        HomeFeaturedCategories(homeChangeNotifier: _homeProvider),
+                        HomeMegaBanner(homeChangeNotifier: _homeProvider),
+                        HomeShopByCategory(homeChangeNotifier: _homeProvider),
+                        HomeSaleBrands(homeChangeNotifier: _homeProvider),
+                        HomeBestDeals(homeChangeNotifier: _homeProvider),
+                        HomeFragrancesBanners(homeChangeNotifier: _homeProvider),
+                        HomePerfumes(homeChangeNotifier: _homeProvider),
+                        HomeOrientalFragrances(homeChangeNotifier: _homeProvider),
+                        HomeCelebrity(homeChangeNotifier: _homeProvider),
+                        HomeGrooming(homeChangeNotifier: _homeProvider),
+                        HomeBestDealsBanner(homeChangeNotifier: _homeProvider),
+                        HomeNewArrivals(homeChangeNotifier: _homeProvider),
+                        HomeNewArrivalsBanner(homeChangeNotifier: _homeProvider),
+                        HomeBestWatches(homeChangeNotifier: _homeProvider),
+                        HomeAdvertise(homeChangeNotifier: _homeProvider),
+                        HomeSmartTech(homeChangeNotifier: _homeProvider),
+                        HomeDiscoverStores(homeChangeNotifier: _homeProvider),
+                        HomeRecent(homeChangeNotifier: _homeProvider),
+                      ],
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: SizedBox(
+                      width: 375.w,
+                      height: ScreenUtil().statusBarHeight + 50.h,
+                      child: AnimatedBuilder(
+                        animation: _animationController,
+                        builder: (context, child) {
+                          return Opacity(
+                            opacity: _animation.value,
+                            child: MarkaaStickySearchBar(),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
             );
           },

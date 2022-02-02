@@ -93,7 +93,7 @@ class _ProductListPageState extends State<ProductListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: backgroundColor,
+      backgroundColor: Colors.white,
       appBar: SecondaryAppBar(),
       body: Stack(
         children: [

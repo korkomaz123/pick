@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:markaa/preload.dart';
-import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/data/mock/mock.dart';
 import 'package:markaa/src/data/models/product_list_arguments.dart';
 import 'package:markaa/src/data/models/product_model.dart';
@@ -21,6 +20,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'markaa_text_icon_button.dart';
 import 'product_v_card.dart';
 
 class ProductCustomVVCard extends StatefulWidget {
@@ -282,7 +282,9 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerPr
                           child: Container(
                             width: widget.cardWidth - 16.w,
                             height: 35.h,
-                            child: MarkaaTextButton(
+                            child: MarkaaTextIconButton(
+                              leading: false,
+                              icon: SvgPicture.asset(shoppingCartIcon, width: 18.w),
                               title: 'wishlist_add_cart_button_title'.tr(),
                               titleColor: Colors.white,
                               titleSize: 14.sp,
@@ -296,7 +298,9 @@ class _ProductCustomVVCardState extends State<ProductCustomVVCard> with TickerPr
                         Container(
                           width: widget.cardWidth - 16.w,
                           height: 35.h,
-                          child: MarkaaTextButton(
+                          child: MarkaaTextIconButton(
+                            leading: false,
+                            icon: SvgPicture.asset(shoppingCartIcon, width: 18.w),
                             title: 'wishlist_add_cart_button_title'.tr(),
                             titleColor: Colors.white,
                             titleSize: 14.sp,

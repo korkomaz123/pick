@@ -31,27 +31,25 @@ class _TermsPageState extends State<TermsPage> {
   }
 
   Widget _buildAboutUsView() {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(15.w),
-              child: FutureBuilder<dynamic>(
-                future: SettingRepository().getTerms(lang),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    return Html(data: snapshot.data['data']['html']);
-                  } else {
-                    return Center(
-                      child: PulseLoadingSpinner(),
-                    );
-                  }
-                },
-              ),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.all(15.w),
+            child: FutureBuilder<dynamic>(
+              future: SettingRepository().getTerms(lang),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return Html(data: snapshot.data['data']['html']);
+                } else {
+                  return Center(
+                    child: PulseLoadingSpinner(),
+                  );
+                }
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

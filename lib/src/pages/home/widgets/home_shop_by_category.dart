@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/change_notifier/home_change_notifier.dart';
 import 'package:markaa/src/components/markaa_text_button.dart';
 import 'package:markaa/src/config/config.dart';
@@ -36,29 +37,35 @@ class _HomeShopByCategoryState extends State<HomeShopByCategory> {
           children: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-              child: Text(
-                'shop_by_categories'.tr(),
-                maxLines: 1,
-                style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 26.sp),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'shop_by_categories'.tr(),
+                      maxLines: 1,
+                      style: mediumTextStyle.copyWith(color: greyDarkColor, fontSize: 26.sp),
+                    ),
+                  ),
+                  Container(
+                    width: 80.w,
+                    height: 30.h,
+                    child: MarkaaTextButton(
+                      title: 'view_all'.tr(),
+                      titleSize: Preload.language == 'en' ? 14.sp : 12.sp,
+                      titleColor: Colors.white,
+                      buttonColor: primarySwatchColor,
+                      borderColor: Colors.transparent,
+                      borderWidth: Preload.language == 'en' ? 1 : 0.5,
+                      radius: 0,
+                      onPressed: () {
+                        Navigator.pushNamed(context, Routes.categoryList);
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
             _buildCategoryList(),
-            Container(
-              width: 375.w,
-              height: 45.h,
-              margin: EdgeInsets.symmetric(vertical: 10.h),
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
-              child: MarkaaTextButton(
-                title: 'see_all_categories'.tr(),
-                titleSize: 20.sp,
-                titleColor: Colors.white,
-                buttonColor: primarySwatchColor,
-                borderColor: Colors.transparent,
-                onPressed: () {
-                  Navigator.pushNamed(context, Routes.categoryList);
-                },
-              ),
-            ),
           ],
         ),
       );

@@ -10,20 +10,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class MarkaaSimpleAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final bool isCartPage;
-  final bool isCenter;
-
-  MarkaaSimpleAppBar({
-    this.isCartPage = false,
-    this.isCenter = true,
-  });
+class MarkaaSimpleAppBar extends StatefulWidget {
+  const MarkaaSimpleAppBar({Key? key});
 
   @override
   _MarkaaSimpleAppBarState createState() => _MarkaaSimpleAppBarState();
-
-  @override
-  Size get preferredSize => Size.fromHeight(90);
 }
 
 class _MarkaaSimpleAppBarState extends State<MarkaaSimpleAppBar> {
@@ -89,7 +80,7 @@ class _MarkaaSimpleAppBarState extends State<MarkaaSimpleAppBar> {
                   child: Padding(
                     padding: EdgeInsets.only(right: 20.w, left: 20.w),
                     child: InkWell(
-                      onTap: () => widget.isCartPage ? null : Navigator.pushNamed(context, Routes.myCart),
+                      onTap: () => Navigator.pushNamed(context, Routes.myCart),
                       child: Consumer<MyCartChangeNotifier>(
                         builder: (_, model, __) {
                           return Badge(
@@ -150,6 +141,129 @@ class _MarkaaSimpleAppBarState extends State<MarkaaSimpleAppBar> {
               readOnly: true,
               onTap: () => Navigator.pushNamed(context, Routes.search),
             ),
+          ),
+          SizedBox(height: 10.h),
+        ],
+      ),
+    );
+  }
+}
+
+class MarkaaStickySearchBar extends StatefulWidget {
+  const MarkaaStickySearchBar({Key? key});
+
+  @override
+  _MarkaaStickySearchBarState createState() => _MarkaaStickySearchBarState();
+}
+
+class _MarkaaStickySearchBarState extends State<MarkaaStickySearchBar> {
+  double? logoWidth;
+
+  double? logoHeight;
+
+  double? pageTitleSize;
+
+  double? pageSubtitleSize;
+
+  double? pageDescSize;
+
+  double? pagePriceSize;
+
+  double? pageTagSize;
+
+  double? pageIconSize;
+
+  double? shoppingCartIconWidth;
+
+  double? shoppingCartIconHeight;
+
+  TextEditingController _searchController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    logoWidth = 66.17.w;
+    logoHeight = 37.4.h;
+    pageTitleSize = 23.sp;
+    pageSubtitleSize = 18.sp;
+    pageDescSize = 15.sp;
+    pagePriceSize = 12.sp;
+    pageTagSize = 10.sp;
+    pageIconSize = 25.sp;
+    shoppingCartIconWidth = 25.06.w;
+    shoppingCartIconHeight = 23.92.h;
+    return Container(
+      width: 375.w,
+      height: ScreenUtil().statusBarHeight + 50.h,
+      color: Colors.white,
+      child: Column(
+        children: [
+          SizedBox(height: ScreenUtil().statusBarHeight),
+          SizedBox(height: 10.h),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                  width: double.infinity,
+                  height: 30.h,
+                  child: TextFormField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                        borderSide: BorderSide(color: Colors.grey, width: 0.5.w),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                        borderSide: BorderSide(color: Colors.grey, width: 0.5.w),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.sp),
+                        borderSide: BorderSide(color: Colors.grey, width: 0.5.w),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: 'search_items'.tr(),
+                      hintStyle: TextStyle(color: primarySwatchColor),
+                      suffixIcon: Icon(
+                        Icons.search,
+                        color: greyDarkColor,
+                        size: 25.sp,
+                      ),
+                    ),
+                    readOnly: true,
+                    onTap: () => Navigator.pushNamed(context, Routes.search),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: InkWell(
+                  onTap: () => Navigator.pushNamed(context, Routes.myCart),
+                  child: Consumer<MyCartChangeNotifier>(
+                    builder: (_, model, __) {
+                      return Badge(
+                        badgeColor: badgeColor,
+                        badgeContent: Text(
+                          '${model.cartTotalCount}',
+                          style: TextStyle(fontSize: 8.sp, color: Colors.white),
+                        ),
+                        showBadge: model.cartItemCount > 0,
+                        toAnimate: false,
+                        animationDuration: Duration.zero,
+                        position: lang == 'ar' ? BadgePosition.topStart(start: -8.w) : BadgePosition.topEnd(end: -8.w),
+                        child: Container(
+                          width: 25.w,
+                          height: 25.h,
+                          child: SvgPicture.asset(shoppingCartIcon, color: primaryColor),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 10.h),
         ],

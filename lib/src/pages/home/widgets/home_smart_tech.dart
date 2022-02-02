@@ -86,14 +86,14 @@ class HomeSmartTech extends StatelessWidget {
               children: [
                 Text(title, style: mediumTextStyle.copyWith(fontSize: 26.sp)),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5.w),
                   height: 30.h,
+                  width: 80.w,
                   child: MarkaaTextButton(
                     title: 'view_all'.tr(),
-                    titleSize: Preload.language == 'en' ? 12.sp : 10.sp,
-                    titleColor: primaryColor,
-                    buttonColor: Colors.white,
-                    borderColor: primaryColor,
+                    titleSize: Preload.language == 'en' ? 14.sp : 12.sp,
+                    titleColor: Colors.white,
+                    buttonColor: primarySwatchColor,
+                    borderColor: Colors.transparent,
                     borderWidth: Preload.language == 'en' ? 1 : 0.5,
                     radius: 0,
                     onPressed: () {

@@ -33,6 +33,7 @@ class MarkaaTextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
+      padding: EdgeInsets.symmetric(horizontal: 3.w),
       onPressed: onPressed,
       color: buttonColor,
       shape: RoundedRectangleBorder(
@@ -46,11 +47,11 @@ class MarkaaTextButton extends StatelessWidget {
         children: [
           if (image != null) ...[
             Padding(
-              padding: EdgeInsets.all(8.w),
+              padding: EdgeInsetsDirectional.only(end: 2.w),
               child: SvgPicture.asset(
                 'lib/public/icons/$image.svg',
-                color: titleColor,
-                height: 35.h,
+                // color: titleColor,
+                height: 30.h,
               ),
             ),
             SizedBox(

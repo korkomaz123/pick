@@ -25,14 +25,16 @@ class HomeOrientalFragrances extends StatelessWidget {
       return Container(
         width: designWidth.w,
         margin: EdgeInsets.only(bottom: 10.h),
-        padding: EdgeInsets.all(8.w),
+        padding: EdgeInsets.symmetric(vertical: 8.w),
         color: Colors.white,
         child: Column(
           children: [
-            _buildHeadline(),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: _buildHeadline(),
+            ),
             HomeExculisiveBanner(homeChangeNotifier: homeChangeNotifier),
             _buildProductsList(homeChangeNotifier.orientalProducts),
-            _buildViewAllButton(context),
           ],
         ),
       );
@@ -44,10 +46,43 @@ class HomeOrientalFragrances extends StatelessWidget {
   Widget _buildHeadline() {
     return Container(
       width: double.infinity,
-      child: Text(
-        homeChangeNotifier.orientalTitle,
-        maxLines: 1,
-        style: mediumTextStyle.copyWith(fontSize: 26.sp, color: greyDarkColor),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              homeChangeNotifier.orientalTitle,
+              maxLines: 1,
+              style: mediumTextStyle.copyWith(fontSize: 26.sp, color: greyDarkColor),
+            ),
+          ),
+          Container(
+            width: 80.w,
+            height: 30.h,
+            child: MarkaaTextButton(
+              title: 'view_all'.tr(),
+              titleSize: Preload.language == 'en' ? 14.sp : 12.sp,
+              titleColor: Colors.white,
+              buttonColor: primarySwatchColor,
+              borderColor: Colors.transparent,
+              borderWidth: Preload.language == 'en' ? 1 : 0.5,
+              radius: 0,
+              onPressed: () {
+                ProductListArguments arguments = ProductListArguments(
+                  category: homeChangeNotifier.orientalCategory,
+                  subCategory: homeChangeNotifier.orientalCategory!.subCategories,
+                  brand: null,
+                  selectedSubCategoryIndex: 0,
+                  isFromBrand: false,
+                );
+                Navigator.pushNamed(
+                  Preload.navigatorKey!.currentContext!,
+                  Routes.productList,
+                  arguments: arguments,
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -74,34 +109,6 @@ class HomeOrientalFragrances extends StatelessWidget {
             onAddToCartFailure: () => homeChangeNotifier.updateOrientalProduct(index),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildViewAllButton(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
-      height: 45.h,
-      child: MarkaaTextButton(
-        title: 'view_all'.tr(),
-        titleSize: 20.sp,
-        titleColor: Colors.white,
-        buttonColor: primarySwatchColor,
-        borderColor: Colors.transparent,
-        onPressed: () {
-          ProductListArguments arguments = ProductListArguments(
-            category: homeChangeNotifier.orientalCategory,
-            subCategory: homeChangeNotifier.orientalCategory!.subCategories,
-            brand: null,
-            selectedSubCategoryIndex: 0,
-            isFromBrand: false,
-          );
-          Navigator.pushNamed(
-            Preload.navigatorKey!.currentContext!,
-            Routes.productList,
-            arguments: arguments,
-          );
-        },
       ),
     );
   }

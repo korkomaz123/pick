@@ -224,14 +224,13 @@ class _ProductPageState extends State<ProductPage> with TickerProviderStateMixin
             icon: Icon(Icons.arrow_back_ios, color: primaryColor, size: 26.sp),
           ),
           Expanded(
-            child: SizedBox(
+            child: Container(
+              width: double.infinity,
               height: 35.h,
               child: TextFormField(
                 controller: TextEditingController(),
                 decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.sp),
                     borderSide: BorderSide.none,

@@ -29,7 +29,7 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
     }
     return Container(
       width: double.infinity,
-      height: designWidth.w * 579 / 1125,
+      height: designWidth.w * 938 / 1125,
       color: Colors.white,
       child: Stack(
         children: [_buildImageSlider(), _buildIndicator()],
@@ -51,7 +51,7 @@ class _HomeHeaderCarouselState extends State<HomeHeaderCarousel> {
           onTap: () => ActionHandler.onClickBanner(banner, context),
           child: CachedNetworkImage(
             width: designWidth.w,
-            height: designWidth.w * 579 / 1125,
+            height: designWidth.w * 938 / 1125,
             imageUrl: banner.bannerImage ?? '',
             fit: BoxFit.fill,
             errorWidget: (context, url, error) => Center(child: Icon(Icons.image, size: 20)),

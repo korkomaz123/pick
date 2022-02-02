@@ -1,5 +1,5 @@
 import 'package:badges/badges.dart';
-import 'package:markaa/src/data/mock/mock.dart';
+import 'package:markaa/preload.dart';
 import 'package:markaa/src/routes/routes.dart';
 import 'package:markaa/src/theme/icons.dart';
 import 'package:markaa/src/theme/styles.dart';
@@ -20,118 +20,94 @@ class SecondaryAppBar extends StatefulWidget implements PreferredSizeWidget {
   _SecondaryAppBarState createState() => _SecondaryAppBarState();
 
   @override
-  Size get preferredSize => Size.fromHeight(50);
+  Size get preferredSize => Size.fromHeight(50.h);
 }
 
 class _SecondaryAppBarState extends State<SecondaryAppBar> {
-  double? logoWidth;
-
-  double? logoHeight;
-
-  double? pageTitleSize;
-
-  double? pageSubtitleSize;
-
-  double? pageDescSize;
-
-  double? pagePriceSize;
-
-  double? pageTagSize;
-
-  double? pageIconSize;
-
-  double? shoppingCartIconWidth;
-
-  double? shoppingCartIconHeight;
-
-  TextEditingController _searchController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
-    logoWidth = 66.17.w;
-    logoHeight = 37.4.h;
-    pageTitleSize = 23.sp;
-    pageSubtitleSize = 18.sp;
-    pageDescSize = 15.sp;
-    pagePriceSize = 12.sp;
-    pageTagSize = 10.sp;
-    pageIconSize = 25.sp;
-    shoppingCartIconWidth = 25.06.w;
-    shoppingCartIconHeight = 23.92.h;
-    return AppBar(
-      elevation: 0,
-      centerTitle: true,
-      backgroundColor: Colors.white,
-      title: widget.title != null
-          ? Text(widget.title!, style: mediumTextStyle.copyWith(color: primarySwatchColor, fontSize: 20.sp))
-          : Container(
-              width: double.infinity,
-              height: 30.h,
-              child: TextFormField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.sp),
-                    borderSide: BorderSide(color: Colors.grey, width: 0.5.w),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.sp),
-                    borderSide: BorderSide(color: Colors.grey, width: 0.5.w),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.sp),
-                    borderSide: BorderSide(color: Colors.grey, width: 0.5.w),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: 'search_items'.tr(),
-                  hintStyle: TextStyle(color: greyColor),
-                  suffixIcon: Icon(
-                    Icons.search,
-                    color: greyDarkColor,
-                    size: 25.sp,
+    return Container(
+      width: 375.w,
+      color: Colors.white,
+      child: Column(
+        children: [
+          SizedBox(height: ScreenUtil().statusBarHeight),
+          Container(
+            width: 375.w,
+            height: 50.h,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(Icons.arrow_back_ios, color: primaryColor, size: 26.sp),
+                ),
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    height: 35.h,
+                    child: TextFormField(
+                      controller: TextEditingController(),
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.sp),
+                          borderSide: BorderSide(color: greyColor, width: 0.3.w),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.sp),
+                          borderSide: BorderSide(color: greyColor, width: 0.3.w),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.sp),
+                          borderSide: BorderSide(color: greyColor, width: 0.3.w),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'search_items'.tr(),
+                        hintStyle: TextStyle(color: darkColor),
+                        suffixIcon: Icon(
+                          Icons.search,
+                          color: greyDarkColor,
+                          size: 25.sp,
+                        ),
+                      ),
+                      readOnly: true,
+                      onTap: () => Navigator.pushNamed(context, Routes.search),
+                    ),
                   ),
                 ),
-                readOnly: true,
-                onTap: () => Navigator.pushNamed(context, Routes.search),
-              ),
-            ),
-      leading: Navigator.canPop(context)
-          ? IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: Icon(Icons.arrow_back_ios, size: 23.sp, color: primarySwatchColor))
-          : Container(),
-      actions: [
-        Padding(
-          padding: EdgeInsets.only(right: 20.w, left: 20.w),
-          child: InkWell(
-            onTap: () => Navigator.pushNamed(context, Routes.myCart),
-            child: Center(
-              child: Consumer<MyCartChangeNotifier>(
-                builder: (_, model, __) {
-                  return Badge(
-                    badgeColor: badgeColor,
-                    badgeContent: Text(
-                      '${model.cartTotalCount}',
-                      style: TextStyle(fontSize: 8.sp, color: Colors.white),
+                IconButton(
+                  onPressed: () => Navigator.pushNamed(context, Routes.myCart),
+                  icon: Center(
+                    child: Consumer<MyCartChangeNotifier>(
+                      builder: (_, model, __) {
+                        return Badge(
+                          badgeColor: badgeColor,
+                          badgeContent: Text(
+                            '${model.cartTotalCount}',
+                            style: mediumTextStyle.copyWith(
+                              fontSize: 8.sp,
+                              color: Colors.white,
+                            ),
+                          ),
+                          showBadge: model.cartItemCount > 0,
+                          toAnimate: false,
+                          animationDuration: Duration.zero,
+                          position: Preload.languageCode == 'ar'
+                              ? BadgePosition.topStart(start: 0, top: -2.h)
+                              : BadgePosition.topEnd(end: 0, top: -2.h),
+                          child: SvgPicture.asset(addCart1Icon),
+                        );
+                      },
                     ),
-                    showBadge: model.cartItemCount > 0,
-                    toAnimate: false,
-                    animationDuration: Duration.zero,
-                    position: lang == 'ar' ? BadgePosition.topStart(start: -8.w) : BadgePosition.topEnd(end: -8.w),
-                    child: Container(
-                      width: 25.w,
-                      height: 25.h,
-                      child: SvgPicture.asset(shoppingCartIcon, color: primarySwatchColor),
-                    ),
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
