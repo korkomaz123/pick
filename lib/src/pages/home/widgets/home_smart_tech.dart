@@ -74,9 +74,10 @@ class HomeSmartTech extends StatelessWidget {
 
   Widget _buildProducts(String title, CategoryEntity category, List<ProductModel> list) {
     return Container(
-      padding: EdgeInsets.only(bottom: 20.h),
       color: Colors.white,
       width: designWidth.w,
+      padding: EdgeInsets.only(bottom: 20.h),
+      margin: EdgeInsets.only(bottom: 10.h),
       child: Column(
         children: [
           Padding(
