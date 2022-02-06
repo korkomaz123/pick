@@ -21,7 +21,6 @@ import 'package:markaa/src/utils/repositories/app_repository.dart';
 import 'package:markaa/src/utils/services/flushbar_service.dart';
 import 'package:markaa/src/utils/services/numeric_service.dart';
 import 'package:markaa/src/utils/services/progress_service.dart';
-import 'package:markaa/src/utils/services/snackbar_service.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -54,7 +53,6 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
   double? serviceFees;
 
   late ProgressService progressService;
-  late SnackBarService snackBarService;
   late FlushBarService flushBarService;
 
   late MarkaaAppChangeNotifier markaaAppChangeNotifier;
@@ -88,10 +86,6 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
     super.initState();
     progressService = ProgressService(context: context);
     flushBarService = FlushBarService(context: context);
-    snackBarService = SnackBarService(
-      context: context,
-      scaffoldKey: scaffoldKey,
-    );
     markaaAppChangeNotifier = context.read<MarkaaAppChangeNotifier>();
     myCartChangeNotifier = context.read<MyCartChangeNotifier>();
     wishlistChangeNotifier = context.read<WishlistChangeNotifier>();
@@ -409,6 +403,7 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
               cartId: cartId,
               isCheckout: isCheckout,
               prepareDetails: _prepareDetails,
+              onReloadItemsSuccess: _onReloadItemSuccess,
             );
           },
         );
@@ -417,10 +412,11 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
   }
 
   void _onCheckout() async {
-    await myCartChangeNotifier.getCartItems(lang, _onProcess, _onReloadItemSuccess, _onFailure);
+    await myCartChangeNotifier.getCartItems(
+        lang, _onProcess, (count) => _onReloadItemSuccess(count, false), _onFailure);
   }
 
-  void _onReloadItemSuccess(int count) {
+  void _onReloadItemSuccess(int count, bool guest) {
     progressService.hideProgress();
     List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
 
@@ -435,18 +431,25 @@ class _MyCartPageState extends State<MyCartPage> with SingleTickerProviderStateM
           '${item.product.name}' + 'out_stock_items_error'.tr(),
           'no_qty.svg',
         );
+        if (user != null) {
+          _onSaveForLaterItem(keys[i]);
+        }
         return;
       }
       if (item.itemCount > item.availableCount) {
         flushBarService.showErrorDialog(
-          'inventory_qty_exceed_error'.tr().replaceFirst('A', item.product.name),
+          'inventory_qty_exceed_error'.tr().replaceFirst('{{item}}', item.product.name),
           'no_qty.svg',
         );
+        myCartChangeNotifier.updateCartItem(item, item.availableCount, _onFailure);
         return;
       }
     }
 
     _prepareDetails();
+    if (guest) {
+      Navigator.pop(context);
+    }
     Navigator.pushNamed(context, Routes.checkout);
   }
 

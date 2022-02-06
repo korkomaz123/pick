@@ -11,6 +11,7 @@ environment:
 dependencies:
   adjust_sdk: ^4.28.0
   algolia: ^1.0.1
+  app_links: ^2.2.0
   app_tracking_transparency: ^2.0.1
   badges: ^2.0.1
   bloc: ^8.0.0

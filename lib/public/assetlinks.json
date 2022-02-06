@@ -1,0 +1,12 @@
+{
+    "relation": [
+        "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+        "namespace": "android_app",
+        "package_name": "com.app.markaa",
+        "sha256_cert_fingerprints": [
+            "52:5C:EA:7E:B6:F4:97:76:36:64:17:41:A3:CC:9C:17:D0:AD:B4:15:C2:E4:D7:F3:43:64:CA:A3:29:83:08:7C"
+        ]
+    }
+}

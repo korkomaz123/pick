@@ -57,6 +57,7 @@ class DynamicLinkService {
         onSuccess: (PendingDynamicLinkData? dynamicLink) async {
           if (dynamicLink != null) {
             final Uri deepLink = dynamicLink.link;
+            print(deepLink.toString());
             if (deepLink.queryParameters.containsKey('id')) {
               dynamicLinkHandler(deepLink);
             }

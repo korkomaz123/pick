@@ -41,11 +41,13 @@ class MyCartQuickAccessLoginDialog extends StatefulWidget {
   final String cartId;
   final bool isCheckout;
   final Function prepareDetails;
+  final void Function(int count, bool guest) onReloadItemsSuccess;
 
   MyCartQuickAccessLoginDialog({
     required this.cartId,
     required this.isCheckout,
     required this.prepareDetails,
+    required this.onReloadItemsSuccess,
   });
 
   @override
@@ -222,7 +224,8 @@ class _MyCartQuickAccessLoginDialogState extends State<MyCartQuickAccessLoginDia
                   adjustEvent = new AdjustEvent(AdjustSDKConfig.checkout);
                   Adjust.trackEvent(adjustEvent);
 
-                  await myCartChangeNotifier.getCartItems(lang, _onProcess, _onReloadItemSuccess, _onFailure);
+                  await myCartChangeNotifier.getCartItems(
+                      lang, _onProcess, (count) => widget.onReloadItemsSuccess(count, true), _onFailure);
                 },
               ),
             ),
@@ -264,34 +267,6 @@ class _MyCartQuickAccessLoginDialogState extends State<MyCartQuickAccessLoginDia
         ],
       ),
     );
-  }
-
-  void _onReloadItemSuccess(int count) {
-    progressService.hideProgress();
-    List<String> keys = myCartChangeNotifier.cartItemsMap.keys.toList();
-    if (count == 0) {
-      flushBarService.showErrorDialog('cart_empty_error'.tr());
-      return;
-    }
-    for (int i = 0; i < myCartChangeNotifier.cartItemCount; i++) {
-      var item = myCartChangeNotifier.cartItemsMap[keys[i]]!;
-      if (item.availableCount == 0) {
-        flushBarService.showErrorDialog(
-          '${item.product.name}' + 'out_stock_items_error'.tr(),
-          'no_qty.svg',
-        );
-        return;
-      }
-      if (item.itemCount > item.availableCount) {
-        flushBarService.showErrorDialog(
-          'inventory_qty_exceed_error'.tr().replaceFirst('A', item.product.name),
-          'no_qty.svg',
-        );
-        return;
-      }
-    }
-    widget.prepareDetails();
-    Navigator.popAndPushNamed(context, Routes.checkout);
   }
 
   void _onProcess() {
