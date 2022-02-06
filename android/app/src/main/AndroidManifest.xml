@@ -77,10 +77,10 @@
                     android:scheme="https"
                     android:host="markaa.com"
                 />
-                <data
+                <!-- <data
                     android:scheme="https"
                     android:host="markaa.page.link"
-                />
+                /> -->
             </intent-filter>
 
         </activity>
