@@ -1,7 +1,7 @@
 import 'package:markaa/env.dart';
 
 class EndPoints {
-  static const String mainDomain = dev ? 'https://magento-627030-2077233.cloudwaysapps.com' : 'https://markaa.com';
+  static const String mainDomain = dev ? 'https://markaa.cigaon.com' : 'https://markaa.com';
   static const String baseUrl = '$mainDomain/customapi/v1';
   static const String gatewayform = '$mainDomain/gatewayform.php';
   static const String privacyAndPolicy = '$mainDomain/privacy-policy';
